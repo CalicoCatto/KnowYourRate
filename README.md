@@ -2,35 +2,47 @@
 
 # KnowYourRate
 
-**AI Agent-powered pricing intelligence engine for content creators**
+**Multi-agent pricing intelligence engine for content creators**
 
-KnowYourRate helps YouTube and TikTok creators determine fair pricing for brand collaborations. Instead of guessing or relying on outdated calculators, creators get multi-dimensional analysis from 5 specialized AI agents that evaluate market rates, creator value, brand budgets, and negotiation dynamics.
+KnowYourRate helps YouTube and TikTok creators determine fair pricing for brand collaborations. Instead of guessing or relying on outdated calculators, creators get multi-dimensional analysis from 4 specialized AI agents that combine deterministic CPM calculations with qualitative LLM reasoning, producing actionable pricing reports with negotiation strategies.
 
 ## The Problem
 
-Content creators are systematically underpaid in brand deals. Research shows creators are lowballed by 30-50% on average. Existing tools like Social Bluebook only offer static estimates based on follower count — a single dimension that misses audience quality, brand context, and negotiation leverage.
+Content creators are systematically underpaid in brand deals. Research shows creators are lowballed by 30-50% on average. Existing tools like Social Bluebook only offer static estimates based on follower count — a single dimension that misses audience quality, brand context, seasonal timing, and negotiation leverage.
 
 ## How It Works
 
-Enter your channel info and the brand deal details. Five AI agents analyze the deal in parallel and produce an actionable pricing report in under 2 minutes:
+Enter your channel info and the brand deal details. The system routes your query through a complexity classifier and runs the appropriate pipeline:
 
 ```
-Phase 1 (parallel):
-  ├── Market Data Agent        → industry benchmarks & trends
-  ├── Creator Profile Agent    → your unique value assessment
-  └── Brand Strategy Agent     → brand budget & negotiation patterns
+User Input → Complexity Router → fast_track or full_pipeline
 
-Phase 2:
-  └── Debate Agent             → simulates brand vs. creator negotiation
+fast_track (simple queries, ~15s):
+  Agent A (Creator Profile + CPM Pricing) → Agent D (Strategy Report)
 
-Phase 3:
-  └── Report Agent             → final pricing report with strategy
+full_pipeline (complex deals, ~60s):
+  Agent A (Creator Profile) → Agent B (Market Intel + Deal Terms)
+    → Agent C (Bull vs Bear Debate with Cross-Rebuttal) → Agent D (Report)
 ```
+
+### Core Design Principle
+
+**Math in code, reasoning in LLM.** All pricing calculations (CPM × views, engagement/geo/growth/seasonal/quality modifiers, deal multipliers) are computed deterministically in Python. LLM is only used for qualitative assessment, brand intelligence, adversarial debate, and report narrative. This ensures consistent, reproducible pricing regardless of which LLM model is used.
+
+### The 4 Agents
+
+| Agent | Role | LLM Usage |
+|-------|------|-----------|
+| **A — Creator Profile** | Computes base price from CPM tables, applies 5 modifier categories, asks LLM for qualitative adjustment (clamped ±30%) | Qualitative assessment only |
+| **B — Market Intel** | Applies deal condition multipliers (deliverable type, usage rights, exclusivity), looks up 40+ known brand patterns, asks LLM for market context | Brand intelligence, comparable deals |
+| **C — Debate** | 3-round adversarial debate: Bull (creator agent, temp 0.7) vs Bear (brand manager, temp 0.3), cross-rebuttal round, then Judge (temp 0.4) synthesizes | Full debate reasoning |
+| **D — Report** | Generates narrative report using exact computed prices, package tiers, negotiation scripts, and contract red flags | Report writing |
 
 **Output includes:**
-- Price range (low / mid / high) with reasoning
+- Price range (walk-away / fair market / anchor) with reasoning
 - Per-content-type breakdown (dedicated video, integration, short, etc.)
-- Negotiation talking points you can use directly
+- 3-tier package recommendations (Starter / Standard / Premium)
+- Negotiation talking points and scripts for 3 scenarios
 - Contract red flags and clause warnings
 - Market context and comparable benchmarks
 
@@ -127,19 +139,26 @@ Paste the output into your `.env` file as `ENCRYPTION_SECRET`.
 KnowYourRate/
 ├── backend/                  # Python / FastAPI
 │   ├── app/
-│   │   ├── agents/           # 5 AI agents + orchestrator
+│   │   ├── agents/           # 4 AI agents + orchestrator
+│   │   │   ├── creator_profile.py  # Agent A: CPM calculation + qualitative assessment
+│   │   │   ├── market_data.py      # Agent B: Deal conditions + brand intel
+│   │   │   ├── debate.py           # Agent C: Bull/Bear/Judge adversarial debate
+│   │   │   ├── report.py           # Agent D: Strategy report generation
+│   │   │   └── orchestrator.py     # Pipeline routing + coordination
 │   │   ├── api/routes/       # REST API endpoints
 │   │   ├── llm/              # LiteLLM provider abstraction
 │   │   ├── models/           # SQLAlchemy ORM models
 │   │   ├── schemas/          # Pydantic request/response schemas
 │   │   ├── services/         # YouTube API, TikTok, encryption
-│   │   └── utils/            # Prompt templates
+│   │   └── utils/
+│   │       ├── prompts.py       # All agent prompt templates
+│   │       └── pricing_tables.py # CPM tables, multipliers, modifiers, brand DB
 │   └── tests/
 ├── frontend/                 # React / TypeScript / Vite / Tailwind
 │   └── src/
 │       ├── pages/            # Setup → Creator → Analysis → Report
 │       ├── components/       # Reusable UI components
-│       ├── api/              # API client
+│       ├── api/              # API client + SSE helpers
 │       └── store/            # Zustand state management
 └── docker-compose.yml        # One-click deployment
 ```
@@ -148,11 +167,11 @@ KnowYourRate/
 
 | Layer | Technology |
 |-------|-----------|
-| Backend | Python 3.11+, FastAPI, SQLAlchemy (async), Alembic |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4 |
-| Database | PostgreSQL 16 |
-| LLM | LiteLLM (unified interface for all providers) |
-| Deployment | Docker Compose |
+| Backend | Python 3.11+, FastAPI, SQLAlchemy (async), LiteLLM |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4, Zustand |
+| Database | PostgreSQL 16 or SQLite (auto-detected) |
+| LLM | LiteLLM (unified interface for 6 providers) |
+| Deployment | Docker Compose, Windows EXE, or local dev |
 
 ### API Endpoints
 
@@ -171,9 +190,9 @@ KnowYourRate/
 ## User Flow
 
 1. **Setup** — Select an LLM provider and enter your API key. Test the connection.
-2. **Creator** — Choose your platform (YouTube/TikTok), enter your channel URL or stats manually. Add the brand name and deal type.
-3. **Analysis** — Watch the 5-agent pipeline run in real-time with live progress updates.
-4. **Report** — Review your pricing intelligence report. Save it or start a new analysis.
+2. **Creator** — Choose your platform (YouTube/TikTok), enter your channel URL or stats manually. Add the brand name, deal type, usage rights, and exclusivity terms.
+3. **Analysis** — Watch the 4-agent pipeline run in real-time with live SSE progress updates. Fast-track queries skip Agents B and C.
+4. **Report** — Review your pricing intelligence report with price ranges, negotiation scripts, package tiers, and contract red flags. Save it or start a new analysis.
 
 ## Internationalization
 
@@ -183,10 +202,10 @@ The app supports English and Chinese (Simplified). Language can be switched in t
 
 | Variable | Required | Description |
 |----------|----------|-------------|
-| `DB_PASSWORD` | Yes | PostgreSQL password (default: `changeme`) |
-| `DATABASE_URL` | Yes | Full database connection string |
+| `DATABASE_URL` | Yes | Database connection string (PostgreSQL or SQLite) |
 | `ENCRYPTION_SECRET` | Yes | Fernet key for encrypting stored API keys |
 | `YOUTUBE_API_KEY` | No | YouTube Data API v3 key for auto channel lookup |
+| `DB_PASSWORD` | Docker only | PostgreSQL password (default: `changeme`) |
 
 ## License
 
