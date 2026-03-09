@@ -1,8 +1,6 @@
 import logging
 import re
 
-from youtube import Channel, Video
-
 logger = logging.getLogger(__name__)
 
 
