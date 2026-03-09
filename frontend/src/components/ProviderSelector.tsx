@@ -6,6 +6,8 @@ const PROVIDER_ICONS: Record<string, { gradient: string; letter: string }> = {
   anthropic: { gradient: "from-orange-500 to-amber-600", letter: "A" },
   google: { gradient: "from-blue-500 to-cyan-600", letter: "G" },
   deepseek: { gradient: "from-violet-500 to-purple-600", letter: "D" },
+  moonshot: { gradient: "from-indigo-500 to-blue-600", letter: "K" },
+  siliconflow: { gradient: "from-sky-500 to-indigo-600", letter: "S" },
 };
 
 interface Props {

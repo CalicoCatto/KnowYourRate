@@ -47,4 +47,32 @@ SUPPORTED_PROVIDERS: dict[str, dict] = {
         "litellm_prefix": "deepseek/",
         "env_key": "DEEPSEEK_API_KEY",
     },
+    "moonshot": {
+        "display_name": "Moonshot (Kimi)",
+        "models": [
+            "kimi-k2.5",
+            "kimi-k2-0905-preview",
+        ],
+        "docs_url": "https://platform.moonshot.cn",
+        "litellm_prefix": "openai/",
+        "env_key": "MOONSHOT_API_KEY",
+        "api_base": "https://api.moonshot.cn/v1",
+        # Kimi K2.5 is a reasoning model that rejects temperature != 1
+        "skip_temperature_models": ["kimi-k2.5"],
+    },
+    "siliconflow": {
+        "display_name": "SiliconFlow",
+        "models": [
+            "Pro/deepseek-ai/DeepSeek-V3.2",
+            "Pro/MiniMaxAI/MiniMax-M2.5",
+            "Pro/zai-org/GLM-4.7",
+            "Pro/deepseek-ai/DeepSeek-V3.1-Terminus",
+            "stepfun-ai/Step-3.5-Flash",
+            "Pro/zai-org/GLM-5",
+        ],
+        "docs_url": "https://cloud.siliconflow.cn",
+        "litellm_prefix": "openai/",
+        "env_key": "SILICONFLOW_API_KEY",
+        "api_base": "https://api.siliconflow.cn/v1",
+    },
 }

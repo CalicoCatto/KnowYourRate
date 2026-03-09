@@ -51,6 +51,8 @@ Choose your preferred LLM provider — bring your own API key:
 | **Anthropic** | Claude Sonnet 4, Claude Haiku 3.5 |
 | **Google** | Gemini 2.0 Flash, Gemini 1.5 Pro |
 | **DeepSeek** | DeepSeek-Chat, DeepSeek-Reasoner |
+| **Moonshot (Kimi)** | Kimi K2.5, Kimi K2 |
+| **SiliconFlow** | DeepSeek V3.2, MiniMax M2.5, GLM-4.7, GLM-5, Step 3.5 Flash |
 
 ## Quick Start
 

@@ -131,7 +131,7 @@ async def test_provider(
         client = LLMClient(provider=body.provider, api_key=body.api_key, model=model)
         response = await client.chat(
             messages=[{"role": "user", "content": "Say 'hello' in one word."}],
-            temperature=0.0,
+            temperature=0.7,
         )
         return TestResult(success=True, message=f"Connection successful. Response: {response[:100]}")
     except Exception as e:

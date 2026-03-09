@@ -61,7 +61,7 @@ frontend/src/
 
 ## Architecture Decisions
 
-- **LLM abstraction**: LiteLLM provides unified interface across OpenAI/Anthropic/Gemini/DeepSeek. Provider config in `llm/registry.py`.
+- **LLM abstraction**: LiteLLM provides unified interface across OpenAI/Anthropic/Gemini/DeepSeek/Moonshot(Kimi)/SiliconFlow. Provider config in `llm/registry.py`. Moonshot and SiliconFlow use OpenAI-compatible API with custom `api_base` URLs. Kimi K2.5 is a reasoning model that rejects explicit temperature — handled via `skip_temperature_models` in registry. Reasoning model `<think>` tags are auto-stripped in `provider.py`.
 - **Agent pipeline**: Orchestrator runs agents 1-3 in parallel (`asyncio.gather`), then agent 4, then agent 5. Each agent returns a dict parsed from LLM JSON output.
 - **SSE progress**: Analysis endpoint streams agent status via Server-Sent Events (no WebSocket).
 - **API key encryption**: Fernet symmetric encryption using `ENCRYPTION_SECRET` env var. Keys encrypted at rest in PostgreSQL `settings` table.

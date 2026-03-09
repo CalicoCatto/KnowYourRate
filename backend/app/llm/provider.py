@@ -2,6 +2,7 @@ import asyncio
 import json
 import logging
 import os
+import re
 
 import litellm
 
@@ -11,6 +12,9 @@ logger = logging.getLogger(__name__)
 
 # Suppress litellm's verbose logging
 litellm.suppress_debug_info = True
+
+# Regex to strip <think>...</think> blocks from reasoning model outputs
+_THINK_RE = re.compile(r"<think>.*?</think>", re.DOTALL)
 
 
 class LLMClient:
@@ -33,14 +37,31 @@ class LLMClient:
         provider_info = SUPPORTED_PROVIDERS[provider]
         self.model = model or provider_info["models"][0]
 
+        # Custom API base URL for OpenAI-compatible providers (Moonshot, SiliconFlow)
+        self.api_base: str | None = provider_info.get("api_base")
+
+        # Models that reject explicit temperature values (e.g. Kimi K2.5 reasoning model)
+        self._skip_temperature_models: list[str] = provider_info.get("skip_temperature_models", [])
+
         # Ensure the model has the correct litellm prefix
         prefix = provider_info["litellm_prefix"]
         if prefix and not self.model.startswith(prefix):
-            self.model = f"{prefix}{self.model}"
+            self.litellm_model = f"{prefix}{self.model}"
+        else:
+            self.litellm_model = self.model
 
         # Set the API key in the environment for litellm
         env_key = provider_info["env_key"]
         os.environ[env_key] = api_key
+
+    def _should_skip_temperature(self) -> bool:
+        """Check if the current model rejects explicit temperature values."""
+        return self.model in self._skip_temperature_models
+
+    @staticmethod
+    def _strip_think_tags(text: str) -> str:
+        """Remove <think>...</think> blocks from reasoning model outputs."""
+        return _THINK_RE.sub("", text).strip()
 
     async def chat(
         self,
@@ -50,16 +71,28 @@ class LLMClient:
     ) -> str:
         """Send a chat completion request and return the response text."""
         kwargs: dict = {
-            "model": self.model,
+            "model": self.litellm_model,
             "messages": messages,
-            "temperature": temperature,
             "api_key": self.api_key,
         }
+
+        # Some reasoning models (e.g. Kimi K2.5) reject temperature != 1
+        if not self._should_skip_temperature():
+            kwargs["temperature"] = temperature
+
+        if self.api_base:
+            kwargs["api_base"] = self.api_base
+
         if response_format:
             kwargs["response_format"] = response_format
 
         response = await self._call_with_retry(**kwargs)
-        return response.choices[0].message.content or ""
+        text = response.choices[0].message.content or ""
+
+        # Strip <think> blocks from reasoning model outputs
+        text = self._strip_think_tags(text)
+
+        return text
 
     async def chat_json(
         self,

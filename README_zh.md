@@ -51,6 +51,8 @@ KnowYourRate 帮助 YouTube 和 TikTok 创作者确定品牌合作的公平报�
 | **Anthropic** | Claude Sonnet 4、Claude Haiku 3.5 |
 | **Google** | Gemini 2.0 Flash、Gemini 1.5 Pro |
 | **DeepSeek** | DeepSeek-Chat、DeepSeek-Reasoner |
+| **月之暗面 (Kimi)** | Kimi K2.5、Kimi K2 |
+| **SiliconFlow** | DeepSeek V3.2、MiniMax M2.5、GLM-4.7、GLM-5、Step 3.5 Flash |
 
 ## 快速开始
 
