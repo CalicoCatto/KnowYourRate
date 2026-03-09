@@ -55,7 +55,13 @@
     "dealType": "合作类型",
     "startAnalysis": "开始分析",
     "starting": "启动中...",
-    "handlePlaceholder": "创作者用户名"
+    "handlePlaceholder": "创作者用户名",
+    "displayName": "显示名称",
+    "displayNamePlaceholder": "频道 / 创作者名称",
+    "switchManual": "没有 API Key？点击手动输入数据",
+    "switchApi": "切换到链接获取",
+    "manualYoutubeSubtitle": "手动输入您的 YouTube 频道数据。",
+    "fetchFailed": "获取资料失败，您可以选择手动输入数据。"
   },
   "analysis": {
     "title": "分析进行中",

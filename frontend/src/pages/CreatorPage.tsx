@@ -21,8 +21,10 @@ export default function CreatorPage() {
   const [fetchError, setFetchError] = useState<string | null>(null);
   const [profile, setProfile] = useState<CreatorProfile | null>(null);
 
-  /* TikTok manual */
+  /* Manual input (shared by YouTube fallback and TikTok) */
+  const [useManual, setUseManual] = useState(false);
   const [manualHandle, setManualHandle] = useState("");
+  const [manualName, setManualName] = useState("");
   const [manualFollowers, setManualFollowers] = useState("");
   const [manualAvgViews, setManualAvgViews] = useState("");
   const [manualEngagement, setManualEngagement] = useState("");
@@ -35,6 +37,14 @@ export default function CreatorPage() {
   /* Submit state */
   const [starting, setStarting] = useState(false);
 
+  /* Reset when switching platform */
+  const handlePlatformSelect = (p: Platform) => {
+    setPlatform(p);
+    setProfile(null);
+    setFetchError(null);
+    setUseManual(p === "tiktok");
+  };
+
   /* Fetch YouTube profile */
   const handleFetch = async () => {
     if (!channelUrl.trim()) return;
@@ -44,14 +54,26 @@ export default function CreatorPage() {
     try {
       const result = await lookupCreator("youtube", channelUrl.trim());
       setProfile(result);
+      setUseManual(false);
     } catch (err: unknown) {
       const msg =
-        err instanceof Error ? err.message : "Failed to fetch profile";
+        err instanceof Error ? err.message : t("creator.fetchFailed");
       setFetchError(msg);
     } finally {
       setFetching(false);
     }
   };
+
+  /* Build manual data object */
+  const buildManualData = () => ({
+    platform: platform ?? "youtube",
+    handle: manualHandle,
+    display_name: manualName || manualHandle,
+    subscriber_count: parseInt(manualFollowers) || 0,
+    avg_views: parseInt(manualAvgViews) || 0,
+    engagement_rate: parseFloat(manualEngagement) || 0,
+    content_niche: manualNiche || "general",
+  });
 
   /* Start analysis */
   const handleStart = async () => {
@@ -62,18 +84,10 @@ export default function CreatorPage() {
       let creatorId: string | undefined;
       let manualData: Record<string, unknown> | undefined;
 
-      if (platform === "youtube" && profile) {
+      if (profile && !useManual) {
         creatorId = profile.id;
-      } else if (platform === "tiktok") {
-        manualData = {
-          platform: "tiktok",
-          handle: manualHandle,
-          display_name: manualHandle,
-          subscriber_count: parseInt(manualFollowers) || 0,
-          avg_views: parseInt(manualAvgViews) || 0,
-          engagement_rate: parseFloat(manualEngagement) || 0,
-          content_niche: manualNiche,
-        };
+      } else {
+        manualData = buildManualData();
       }
 
       const result = await startAnalysis({
@@ -91,10 +105,11 @@ export default function CreatorPage() {
     }
   };
 
+  const manualValid = manualHandle.trim() && manualFollowers.trim();
   const canStart =
     brandName.trim() &&
-    ((platform === "youtube" && profile) ||
-      (platform === "tiktok" && manualHandle && manualFollowers));
+    ((platform === "youtube" && (profile || (useManual && manualValid))) ||
+      (platform === "tiktok" && manualValid));
 
   return (
     <div className="mx-auto max-w-2xl animate-slide-up">
@@ -106,10 +121,10 @@ export default function CreatorPage() {
 
       <div className="space-y-8">
         {/* Platform selector */}
-        <PlatformSelector selected={platform} onSelect={setPlatform} />
+        <PlatformSelector selected={platform} onSelect={handlePlatformSelect} />
 
-        {/* YouTube: URL lookup */}
-        {platform === "youtube" && (
+        {/* YouTube: URL lookup + manual fallback */}
+        {platform === "youtube" && !useManual && (
           <div className="animate-fade-in space-y-5">
             <div>
               <label className="label">{t("creator.channelUrl")}</label>
@@ -134,6 +149,13 @@ export default function CreatorPage() {
                   {fetchError}
                 </p>
               )}
+              {/* Manual entry switch */}
+              <button
+                onClick={() => setUseManual(true)}
+                className="mt-3 text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300"
+              >
+                {t("creator.switchManual")}
+              </button>
             </div>
 
             {/* Profile preview */}
@@ -177,16 +199,28 @@ export default function CreatorPage() {
           </div>
         )}
 
-        {/* TikTok: Manual entry */}
-        {platform === "tiktok" && (
+        {/* Manual entry form (TikTok always, YouTube when toggled or fetch failed) */}
+        {platform && useManual && (
           <div className="animate-fade-in space-y-5 rounded-2xl border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900">
-            <div>
-              <h4 className="font-semibold text-gray-900 dark:text-white">
-                {t("creator.manualEntry")}
-              </h4>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                {t("creator.manualSubtitle")}
-              </p>
+            <div className="flex items-center justify-between">
+              <div>
+                <h4 className="font-semibold text-gray-900 dark:text-white">
+                  {t("creator.manualEntry")}
+                </h4>
+                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                  {platform === "tiktok"
+                    ? t("creator.manualSubtitle")
+                    : t("creator.manualYoutubeSubtitle")}
+                </p>
+              </div>
+              {platform === "youtube" && (
+                <button
+                  onClick={() => setUseManual(false)}
+                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"
+                >
+                  {t("creator.switchApi")}
+                </button>
+              )}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -197,6 +231,15 @@ export default function CreatorPage() {
                   placeholder="@username"
                   value={manualHandle}
                   onChange={(e) => setManualHandle(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="label">{t("creator.displayName")}</label>
+                <input
+                  className="input"
+                  placeholder={t("creator.displayNamePlaceholder")}
+                  value={manualName}
+                  onChange={(e) => setManualName(e.target.value)}
                 />
               </div>
               <div>
@@ -232,22 +275,21 @@ export default function CreatorPage() {
                   onChange={(e) => setManualEngagement(e.target.value)}
                 />
               </div>
-            </div>
-
-            <div>
-              <label className="label">{t("creator.niche")}</label>
-              <select
-                className="select"
-                value={manualNiche}
-                onChange={(e) => setManualNiche(e.target.value)}
-              >
-                <option value="">{t("creator.selectNiche")}</option>
-                {NICHE_OPTIONS.map((n) => (
-                  <option key={n} value={n}>
-                    {n.charAt(0).toUpperCase() + n.slice(1)}
-                  </option>
-                ))}
-              </select>
+              <div>
+                <label className="label">{t("creator.niche")}</label>
+                <select
+                  className="select"
+                  value={manualNiche}
+                  onChange={(e) => setManualNiche(e.target.value)}
+                >
+                  <option value="">{t("creator.selectNiche")}</option>
+                  {NICHE_OPTIONS.map((n) => (
+                    <option key={n} value={n}>
+                      {n.charAt(0).toUpperCase() + n.slice(1)}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
           </div>
         )}

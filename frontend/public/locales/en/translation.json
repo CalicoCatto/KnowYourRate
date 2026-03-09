@@ -55,7 +55,13 @@
     "dealType": "Deal Type",
     "startAnalysis": "Start Analysis",
     "starting": "Starting...",
-    "handlePlaceholder": "Creator handle or username"
+    "handlePlaceholder": "Creator handle or username",
+    "displayName": "Display Name",
+    "displayNamePlaceholder": "Channel / creator name",
+    "switchManual": "No API key? Enter data manually instead",
+    "switchApi": "Switch to URL lookup",
+    "manualYoutubeSubtitle": "Enter your YouTube channel stats manually.",
+    "fetchFailed": "Failed to fetch profile. You can enter data manually instead."
   },
   "analysis": {
     "title": "Analysis in Progress",
