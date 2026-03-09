@@ -10,6 +10,8 @@ import SetupPage from "./pages/SetupPage";
 import CreatorPage from "./pages/CreatorPage";
 import AnalysisPage from "./pages/AnalysisPage";
 import ReportPage from "./pages/ReportPage";
+import HistoryPage from "./pages/HistoryPage";
+import SavedReportPage from "./pages/SavedReportPage";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +22,8 @@ const router = createBrowserRouter([
       { path: "creator", element: <CreatorPage /> },
       { path: "analysis/:runId", element: <AnalysisPage /> },
       { path: "report/:runId", element: <ReportPage /> },
+      { path: "history", element: <HistoryPage /> },
+      { path: "history/:reportId", element: <SavedReportPage /> },
     ],
   },
 ]);

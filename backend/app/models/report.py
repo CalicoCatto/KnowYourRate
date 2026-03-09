@@ -30,6 +30,7 @@ class Report(Base):
     price_high: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     currency: Mapped[str] = mapped_column(String(10), nullable=False, default="USD")
     full_report: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    agent_outputs: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         default=lambda: datetime.now(timezone.utc),
     )

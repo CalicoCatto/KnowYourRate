@@ -8,7 +8,8 @@
     "setup": "设置",
     "creator": "创作者",
     "analysis": "分析",
-    "report": "报告"
+    "report": "报告",
+    "history": "历史报告"
   },
   "setup": {
     "title": "开始使用",
@@ -110,6 +111,17 @@
     "saved": "报告已保存！",
     "newAnalysis": "新建分析",
     "export": "导出 / 打印",
+    "showDetailed": "详细分析",
+    "showSummary": "简洁视图",
+    "detailedTitle": "完整分析链",
+    "detailedSubtitle": "5 个 AI Agent 从数据采集到最终定价建议的完整推理过程。",
+    "detailed": {
+      "marketData": "市场研究数据",
+      "creatorAnalysis": "创作者画像分析",
+      "brandStrategy": "品牌策略分析",
+      "debate": "价格辩论推演",
+      "finalReport": "最终综合报告"
+    },
     "severity": {
       "low": "低风险",
       "medium": "中风险",
@@ -117,6 +129,12 @@
     },
     "copyPoint": "复制",
     "copied": "已复制！"
+  },
+  "history": {
+    "title": "历史报告",
+    "subtitle": "查看和管理过去的分析报告。",
+    "empty": "暂无报告。开始一次分析来生成第一份报告。",
+    "startFirst": "开始分析"
   },
   "common": {
     "loading": "加载中...",

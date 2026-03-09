@@ -8,7 +8,8 @@
     "setup": "Setup",
     "creator": "Creator",
     "analysis": "Analysis",
-    "report": "Report"
+    "report": "Report",
+    "history": "History"
   },
   "setup": {
     "title": "Get Started",
@@ -110,6 +111,17 @@
     "saved": "Report Saved!",
     "newAnalysis": "New Analysis",
     "export": "Export / Print",
+    "showDetailed": "Detailed Analysis",
+    "showSummary": "Summary View",
+    "detailedTitle": "Full Analysis Chain",
+    "detailedSubtitle": "Complete reasoning from all 5 AI agents that led to the final pricing recommendation.",
+    "detailed": {
+      "marketData": "Market Research Data",
+      "creatorAnalysis": "Creator Profile Analysis",
+      "brandStrategy": "Brand Strategy Analysis",
+      "debate": "Price Negotiation Debate",
+      "finalReport": "Final Synthesized Report"
+    },
     "severity": {
       "low": "Low Risk",
       "medium": "Medium Risk",
@@ -117,6 +129,12 @@
     },
     "copyPoint": "Copy",
     "copied": "Copied!"
+  },
+  "history": {
+    "title": "Report History",
+    "subtitle": "View and manage your past analysis reports.",
+    "empty": "No reports yet. Start an analysis to generate your first report.",
+    "startFirst": "Start Analysis"
   },
   "common": {
     "loading": "Loading...",

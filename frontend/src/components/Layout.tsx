@@ -7,6 +7,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 const NAV_ITEMS = [
   { path: "/", label: "nav.setup" },
   { path: "/creator", label: "nav.creator" },
+  { path: "/history", label: "nav.history" },
 ] as const;
 
 export default function Layout({ children }: { children: ReactNode }) {

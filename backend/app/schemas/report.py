@@ -29,6 +29,7 @@ class ReportResponse(BaseModel):
     price_high: Decimal | None = None
     currency: str
     full_report: dict | None = None
+    agent_outputs: dict | None = None
     created_at: datetime
 
 

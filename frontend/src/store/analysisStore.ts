@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { subscribeToStatus, getAnalysisResult } from "@/api/client";
+import { subscribeToStatus, getAnalysisResult, saveReport } from "@/api/client";
 import type { AgentStep, AgentStatus, AnalysisResult, SSEEvent } from "@/types";
 
 const DEFAULT_STEPS: AgentStep[] = [
@@ -72,6 +72,8 @@ export const useAnalysisStore = create<AnalysisState>()((set, get) => ({
         getAnalysisResult(runId)
           .then((result) => {
             set((s) => updateRun(s, runId, { result }));
+            // Auto-save report
+            saveReport(runId).catch(() => {});
           })
           .catch((err) => {
             set((s) =>

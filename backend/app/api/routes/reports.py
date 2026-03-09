@@ -57,6 +57,7 @@ async def get_report(
         price_high=report.price_high,
         currency=report.currency,
         full_report=report.full_report,
+        agent_outputs=report.agent_outputs,
         created_at=report.created_at,
     )
 
@@ -86,7 +87,35 @@ async def create_report(
     if run.status != "completed":
         raise HTTPException(status_code=400, detail="Analysis run is not completed")
 
+    # Check for existing report for this run
+    existing = await db.execute(
+        select(Report).where(Report.analysis_run_id == str(body.analysis_run_id))
+    )
+    existing_report = existing.scalar_one_or_none()
+    if existing_report:
+        return ReportResponse(
+            id=existing_report.id,
+            analysis_run_id=existing_report.analysis_run_id,
+            title=existing_report.title,
+            summary=existing_report.summary,
+            price_low=existing_report.price_low,
+            price_mid=existing_report.price_mid,
+            price_high=existing_report.price_high,
+            currency=existing_report.currency,
+            full_report=existing_report.full_report,
+            agent_outputs=existing_report.agent_outputs,
+            created_at=existing_report.created_at,
+        )
+
     final = run.final_report or {}
+
+    # Collect all agent outputs for the detailed view
+    agent_outputs = {
+        "market_data": run.market_data,
+        "creator_analysis": run.creator_analysis,
+        "brand_analysis": run.brand_analysis,
+        "debate_result": run.debate_result,
+    }
 
     report = Report(
         analysis_run_id=str(body.analysis_run_id),
@@ -97,6 +126,7 @@ async def create_report(
         price_high=body.price_high or final.get("price_high"),
         currency=body.currency or final.get("currency", "USD"),
         full_report=run.final_report,
+        agent_outputs=agent_outputs,
     )
     db.add(report)
     await db.flush()
@@ -111,5 +141,6 @@ async def create_report(
         price_high=report.price_high,
         currency=report.currency,
         full_report=report.full_report,
+        agent_outputs=report.agent_outputs,
         created_at=report.created_at,
     )

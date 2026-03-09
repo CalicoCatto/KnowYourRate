@@ -1,72 +1,38 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { getAnalysisResult, getReport, saveReport } from "@/api/client";
+import { getReport } from "@/api/client";
 import PriceRangeChart from "@/components/PriceRangeChart";
 import NegotiationPoints from "@/components/NegotiationPoints";
 import ContractRedFlags from "@/components/ContractRedFlags";
 import DetailedAnalysis from "@/components/DetailedAnalysis";
 import type {
-  AnalysisResult,
+  ReportResponse,
   FinalReport,
   NegotiationPoint,
   ContractRedFlag,
   ContentTypePricing,
-  ReportResponse,
-  AgentOutputs,
 } from "@/types";
 
-export default function ReportPage() {
-  const { runId } = useParams<{ runId: string }>();
+export default function SavedReportPage() {
+  const { reportId } = useParams<{ reportId: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [result, setResult] = useState<AnalysisResult | null>(null);
-  const [savedReport, setSavedReport] = useState<ReportResponse | null>(null);
+  const [report, setReport] = useState<ReportResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showDetailed, setShowDetailed] = useState(false);
 
   useEffect(() => {
-    if (!runId) return;
-
-    // Fetch analysis result and auto-save the report
-    getAnalysisResult(runId)
-      .then(async (res) => {
-        setResult(res);
-        // Auto-save and get full report with agent_outputs
-        try {
-          const saved = await saveReport(runId);
-          // Fetch the full saved report to get agent_outputs
-          const full = await getReport(saved.id);
-          setSavedReport(full);
-        } catch {
-          // Already saved or save failed — try to find existing
-        }
-      })
+    if (!reportId) return;
+    getReport(reportId)
+      .then(setReport)
       .catch((err) => {
         setError(err instanceof Error ? err.message : "Failed to load report");
       })
       .finally(() => setLoading(false));
-  }, [runId]);
-
-  const report: FinalReport = (result?.final_report as FinalReport) ?? {};
-
-  const priceLow = report.price_low ?? 0;
-  const priceMid = report.price_mid ?? 0;
-  const priceHigh = report.price_high ?? 0;
-  const currency = report.currency ?? "USD";
-
-  const negotiationPoints: NegotiationPoint[] = report.negotiation_points ?? [];
-  const redFlags: ContractRedFlag[] = report.contract_red_flags ?? [];
-  const contentTypePricing: ContentTypePricing[] = report.content_type_pricing ?? [];
-
-  const agentOutputs: AgentOutputs | null = savedReport?.agent_outputs ?? (result ? {
-    market_data: result.market_data,
-    creator_analysis: result.creator_analysis,
-    brand_analysis: result.brand_analysis,
-    debate_result: result.debate_result,
-  } : null);
+  }, [reportId]);
 
   if (loading) {
     return (
@@ -76,30 +42,50 @@ export default function ReportPage() {
     );
   }
 
-  if (error) {
+  if (error || !report) {
     return (
       <div className="mx-auto max-w-2xl py-24 text-center">
-        <p className="text-red-600 dark:text-red-400">{error}</p>
-        <button onClick={() => navigate("/creator")} className="btn-secondary mt-4">
+        <p className="text-red-600 dark:text-red-400">{error ?? "Report not found"}</p>
+        <button onClick={() => navigate("/history")} className="btn-secondary mt-4">
           {t("common.back")}
         </button>
       </div>
     );
   }
 
+  const fr: FinalReport = (report.full_report as FinalReport) ?? {};
+  const priceLow = fr.price_low ?? Number(report.price_low ?? 0);
+  const priceMid = fr.price_mid ?? Number(report.price_mid ?? 0);
+  const priceHigh = fr.price_high ?? Number(report.price_high ?? 0);
+  const currency = fr.currency ?? report.currency;
+  const negotiationPoints: NegotiationPoint[] = fr.negotiation_points ?? [];
+  const redFlags: ContractRedFlag[] = fr.contract_red_flags ?? [];
+  const contentTypePricing: ContentTypePricing[] = fr.content_type_pricing ?? [];
+
   return (
     <div className="mx-auto max-w-4xl animate-slide-up space-y-8">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="section-title">
-            {report.title ?? t("report.title")}
-          </h1>
-          {result?.completed_at && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {new Date(result.completed_at).toLocaleDateString()}
-            </p>
-          )}
+          <button
+            onClick={() => navigate("/history")}
+            className="mb-2 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+            </svg>
+            {t("history.title")}
+          </button>
+          <h1 className="section-title">{report.title}</h1>
+          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            {new Date(report.created_at).toLocaleDateString(undefined, {
+              year: "numeric",
+              month: "long",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </p>
         </div>
         <div className="flex gap-3">
           <button onClick={() => window.print()} className="btn-secondary">
@@ -117,13 +103,13 @@ export default function ReportPage() {
       {!showDetailed ? (
         <>
           {/* Executive summary */}
-          {(report.executive_summary ?? report.summary) && (
+          {(fr.executive_summary ?? fr.summary) && (
             <div className="card">
               <h2 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 {t("report.executiveSummary")}
               </h2>
               <p className="leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                {report.executive_summary ?? report.summary}
+                {fr.executive_summary ?? fr.summary}
               </p>
             </div>
           )}
@@ -171,19 +157,22 @@ export default function ReportPage() {
           <NegotiationPoints points={negotiationPoints} />
           <ContractRedFlags flags={redFlags} />
 
-          {report.market_context && (
+          {fr.market_context && (
             <div className="card">
               <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
                 {t("report.marketContext")}
               </h3>
               <p className="leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
-                {report.market_context}
+                {fr.market_context}
               </p>
             </div>
           )}
         </>
       ) : (
-        <DetailedAnalysis agentOutputs={agentOutputs} finalReport={report} />
+        <DetailedAnalysis
+          agentOutputs={report.agent_outputs}
+          finalReport={fr}
+        />
       )}
 
       {/* Bottom actions */}

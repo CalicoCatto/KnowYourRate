@@ -119,6 +119,13 @@ export interface FinalReport {
 
 /* ---- Saved Report ---- */
 
+export interface AgentOutputs {
+  market_data: Record<string, unknown> | null;
+  creator_analysis: Record<string, unknown> | null;
+  brand_analysis: Record<string, unknown> | null;
+  debate_result: Record<string, unknown> | null;
+}
+
 export interface ReportResponse {
   id: string;
   analysis_run_id: string;
@@ -129,6 +136,7 @@ export interface ReportResponse {
   price_high: number | null;
   currency: string;
   full_report: FinalReport | null;
+  agent_outputs: AgentOutputs | null;
   created_at: string;
 }
 

@@ -58,6 +58,16 @@ def create_app() -> FastAPI:
         logger.info("Creating database tables...")
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
+            # Migrate: add agent_outputs column to reports if missing
+            if get_settings().is_sqlite:
+                from sqlalchemy import text
+                try:
+                    await conn.execute(
+                        text("ALTER TABLE reports ADD COLUMN agent_outputs JSON")
+                    )
+                    logger.info("Added agent_outputs column to reports table.")
+                except Exception:
+                    pass  # Column already exists
         logger.info("Database tables ready.")
 
     # Serve frontend static files (EXE mode or when frontend/dist exists)
