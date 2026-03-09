@@ -29,6 +29,9 @@ async def _run_analysis(
     creator_data: dict,
     brand_name: str,
     deal_type: str,
+    usage_rights: str,
+    exclusivity: str,
+    is_first_brand_deal: bool,
     language: str,
     llm_client: LLMClient,
     db_url: str,
@@ -61,13 +64,19 @@ async def _run_analysis(
             orchestrator = AgentOrchestrator(llm_client=llm_client, language=language)
             result = await orchestrator.run_pipeline(
                 creator_data=creator_data,
-                brand_info={"brand_name": brand_name, "deal_type": deal_type},
+                brand_info={
+                    "brand_name": brand_name,
+                    "deal_type": deal_type,
+                    "usage_rights": usage_rights,
+                    "exclusivity": exclusivity,
+                    "is_first_brand_deal": is_first_brand_deal,
+                },
                 on_progress=on_progress,
             )
 
-            run.market_data = result.get("market_data")
+            run.market_data = result.get("market_intel")
             run.creator_analysis = result.get("creator_analysis")
-            run.brand_analysis = result.get("brand_analysis")
+            run.brand_analysis = result.get("market_intel")  # market_intel replaces brand_analysis
             run.debate_result = result.get("debate_result")
             run.final_report = result.get("final_report")
             run.status = "completed"
@@ -138,6 +147,9 @@ async def start_analysis(
         creator_data=creator_data,
         brand_name=body.brand_name,
         deal_type=body.deal_type,
+        usage_rights=body.usage_rights,
+        exclusivity=body.exclusivity,
+        is_first_brand_deal=body.is_first_brand_deal,
         language=body.language,
         llm_client=llm_client,
         db_url=db_url,
@@ -210,6 +222,7 @@ async def get_result(
         market_data=run.market_data,
         creator_analysis=run.creator_analysis,
         brand_analysis=run.brand_analysis,
+        market_intel=run.market_data,
         debate_result=run.debate_result,
         final_report=run.final_report,
         started_at=run.started_at,

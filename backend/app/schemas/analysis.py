@@ -10,7 +10,10 @@ class AnalysisRequest(BaseModel):
     creator_id: UUID | None = None
     manual_data: dict | None = None
     brand_name: str
-    deal_type: str = "sponsored_video"
+    deal_type: str = "dedicated_video"
+    usage_rights: str = "organic_only"
+    exclusivity: str = "none"
+    is_first_brand_deal: bool = False
     language: str = "en"
 
 
@@ -31,6 +34,7 @@ class AnalysisResult(BaseModel):
     market_data: dict | None = None
     creator_analysis: dict | None = None
     brand_analysis: dict | None = None
+    market_intel: dict | None = None
     debate_result: dict | None = None
     final_report: dict | None = None
     started_at: datetime | None = None

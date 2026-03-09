@@ -58,10 +58,12 @@
     "avgViewsLabel": "平均每视频播放量",
     "engagementRateLabel": "互动率 (%)",
     "selectNiche": "选择内容领域",
-    "brandInfo": "品牌信息",
+    "brandInfo": "品牌与合作条件",
     "brandName": "品牌名称",
-    "brandNamePlaceholder": "输入品牌名称...",
-    "dealType": "合作类型",
+    "brandNamePlaceholder": "例如 NordVPN、Skillshare、HelloFresh...",
+    "dealType": "内容类型",
+    "usageRights": "使用权",
+    "exclusivity": "排他性",
     "startAnalysis": "开始分析",
     "starting": "启动中...",
     "handlePlaceholder": "创作者用户名",
@@ -70,7 +72,9 @@
     "switchManual": "没有 API Key？点击手动输入数据",
     "switchApi": "切换到链接获取",
     "manualYoutubeSubtitle": "手动输入您的 YouTube 频道数据。",
-    "fetchFailed": "获取资料失败，您可以选择手动输入数据。"
+    "fetchFailed": "获取资料失败，您可以选择手动输入数据。",
+    "isFirstBrandDeal": "首次品牌合作",
+    "isFirstBrandDealDesc": "这是我第一次与品牌合作"
   },
   "analysis": {
     "title": "分析进行中",
@@ -80,26 +84,26 @@
     "viewReport": "查看报告",
     "estimatedTime": "预计剩余时间",
     "agents": {
-      "market_data": "市场研究",
-      "creator_profile": "创作者分析",
-      "brand_strategy": "品牌策略",
-      "debate": "价格辩论",
-      "report": "报告生成"
+      "creator_profile": "创作者画像分析",
+      "market_intel": "市场情报分析",
+      "debate": "对抗性定价辩论",
+      "report": "策略报告生成"
     },
     "status": {
       "pending": "等待中",
       "running": "运行中",
       "completed": "已完成",
-      "failed": "失败"
+      "failed": "失败",
+      "skipped": "已跳过"
     }
   },
   "report": {
     "title": "定价报告",
     "executiveSummary": "概要摘要",
     "priceRange": "建议价格区间",
-    "low": "最低",
-    "mid": "建议",
-    "high": "高端",
+    "low": "底线价",
+    "mid": "公平市场价",
+    "high": "锚定开口价",
     "contentBreakdown": "内容类型明细",
     "contentType": "内容类型",
     "priceRangeCol": "价格区间",
@@ -114,19 +118,21 @@
     "showDetailed": "详细分析",
     "showSummary": "简洁视图",
     "detailedTitle": "完整分析链",
-    "detailedSubtitle": "5 个 AI Agent 从数据采集到最终定价建议的完整推理过程。",
+    "detailedSubtitle": "全部 AI Agent 的完整推理过程 — CPM 计算、市场情报、对抗辩论与最终建议。",
     "detailed": {
-      "marketData": "市场研究数据",
-      "creatorAnalysis": "创作者画像分析",
-      "brandStrategy": "品牌策略分析",
-      "debate": "价格辩论推演",
-      "finalReport": "最终综合报告"
+      "creatorAnalysis": "创作者画像与 CPM 分析",
+      "marketIntel": "市场情报与合作条件",
+      "debate": "看多 vs 看空定价辩论",
+      "finalReport": "最终策略报告"
     },
     "severity": {
       "low": "低风险",
       "medium": "中风险",
       "high": "高风险"
     },
+    "packageTiers": "套餐方案",
+    "savings": "节省",
+    "negotiationScripts": "谈判话术脚本",
     "copyPoint": "复制",
     "copied": "已复制！"
   },

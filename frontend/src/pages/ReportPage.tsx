@@ -62,8 +62,9 @@ export default function ReportPage() {
   const contentTypePricing: ContentTypePricing[] = report.content_type_pricing ?? [];
 
   const agentOutputs: AgentOutputs | null = savedReport?.agent_outputs ?? (result ? {
-    market_data: result.market_data,
     creator_analysis: result.creator_analysis,
+    market_intel: result.market_intel ?? result.market_data,
+    market_data: result.market_data,
     brand_analysis: result.brand_analysis,
     debate_result: result.debate_result,
   } : null);
@@ -168,7 +169,73 @@ export default function ReportPage() {
             </div>
           )}
 
+          {/* Package Tiers */}
+          {report.package_tiers && Object.keys(report.package_tiers).length > 0 && (
+            <div className="card">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                {t("report.packageTiers")}
+              </h3>
+              <div className="grid gap-4 sm:grid-cols-3">
+                {Object.values(report.package_tiers).map((tier, idx) => (
+                  <div
+                    key={idx}
+                    className={`rounded-xl border p-5 ${
+                      idx === 1
+                        ? "border-primary-400 bg-primary-50 dark:border-primary-600 dark:bg-primary-950"
+                        : "border-gray-200 dark:border-gray-700"
+                    }`}
+                  >
+                    <h4 className="text-base font-semibold text-gray-900 dark:text-white">
+                      {tier.name}
+                    </h4>
+                    <p className="mt-1 text-2xl font-bold text-primary-600 dark:text-primary-400">
+                      {fmtCurrency(tier.price, currency)}
+                    </p>
+                    {tier.duration && (
+                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{tier.duration}</p>
+                    )}
+                    <ul className="mt-3 space-y-1">
+                      {tier.includes.map((item, i) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300">
+                          <span className="mt-0.5 text-primary-500">•</span>
+                          {item}
+                        </li>
+                      ))}
+                    </ul>
+                    {tier.savings_vs_individual && (
+                      <p className="mt-3 text-xs font-medium text-green-600 dark:text-green-400">
+                        {t("report.savings")}: {tier.savings_vs_individual}
+                      </p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <NegotiationPoints points={negotiationPoints} />
+
+          {/* Negotiation Scripts */}
+          {report.negotiation_scripts && report.negotiation_scripts.length > 0 && (
+            <div className="card">
+              <h3 className="mb-4 text-lg font-semibold text-gray-900 dark:text-white">
+                {t("report.negotiationScripts")}
+              </h3>
+              <div className="space-y-4">
+                {report.negotiation_scripts.map((script, idx) => (
+                  <div key={idx} className="rounded-lg border border-gray-200 p-4 dark:border-gray-700">
+                    <h4 className="mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+                      {script.scenario}
+                    </h4>
+                    <p className="whitespace-pre-line text-sm italic text-gray-700 dark:text-gray-300">
+                      "{script.script}"
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           <ContractRedFlags flags={redFlags} />
 
           {report.market_context && (

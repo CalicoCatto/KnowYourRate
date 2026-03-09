@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import type { Platform, CreatorProfile, DealType } from "@/types";
+import type { Platform, CreatorProfile, DealType, UsageRights, Exclusivity } from "@/types";
 
 interface CreatorState {
   platform: Platform | null;
@@ -15,6 +15,9 @@ interface CreatorState {
   manualNiche: string;
   brandName: string;
   dealType: DealType;
+  usageRights: UsageRights;
+  exclusivity: Exclusivity;
+  isFirstBrandDeal: boolean;
 
   setPlatform: (p: Platform | null) => void;
   setChannelUrl: (v: string) => void;
@@ -29,6 +32,9 @@ interface CreatorState {
   setManualNiche: (v: string) => void;
   setBrandName: (v: string) => void;
   setDealType: (v: DealType) => void;
+  setUsageRights: (v: UsageRights) => void;
+  setExclusivity: (v: Exclusivity) => void;
+  setIsFirstBrandDeal: (v: boolean) => void;
   resetPlatform: (p: Platform) => void;
 }
 
@@ -46,6 +52,9 @@ export const useCreatorStore = create<CreatorState>()((set) => ({
   manualNiche: "",
   brandName: "",
   dealType: "dedicated_video",
+  usageRights: "organic_only",
+  exclusivity: "none",
+  isFirstBrandDeal: false,
 
   setPlatform: (platform) => set({ platform }),
   setChannelUrl: (channelUrl) => set({ channelUrl }),
@@ -60,6 +69,9 @@ export const useCreatorStore = create<CreatorState>()((set) => ({
   setManualNiche: (manualNiche) => set({ manualNiche }),
   setBrandName: (brandName) => set({ brandName }),
   setDealType: (dealType) => set({ dealType }),
+  setUsageRights: (usageRights) => set({ usageRights }),
+  setExclusivity: (exclusivity) => set({ exclusivity }),
+  setIsFirstBrandDeal: (isFirstBrandDeal) => set({ isFirstBrandDeal }),
   resetPlatform: (p) =>
     set({
       platform: p,

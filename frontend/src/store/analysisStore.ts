@@ -3,11 +3,10 @@ import { subscribeToStatus, getAnalysisResult, saveReport } from "@/api/client";
 import type { AgentStep, AgentStatus, AnalysisResult, SSEEvent } from "@/types";
 
 const DEFAULT_STEPS: AgentStep[] = [
-  { agent: "market_data", label: "Market Research", description: "Gathering current sponsorship market data and benchmarks", status: "pending" },
-  { agent: "creator_profile", label: "Creator Analysis", description: "Analyzing creator metrics, audience, and content quality", status: "pending" },
-  { agent: "brand_strategy", label: "Brand Strategy", description: "Evaluating brand fit, campaign goals, and deal structure", status: "pending" },
-  { agent: "debate", label: "Price Debate", description: "Agents debate fair pricing from multiple perspectives", status: "pending" },
-  { agent: "report", label: "Report Generation", description: "Compiling final pricing report with recommendations", status: "pending" },
+  { agent: "creator_profile", label: "Creator Analysis", description: "Computing base pricing from CPM data and evaluating creator quality", status: "pending" },
+  { agent: "market_intel", label: "Market Intelligence", description: "Analyzing deal conditions, brand intel, and comparable deals", status: "pending" },
+  { agent: "debate", label: "Price Debate", description: "Bull vs Bear adversarial debate to find optimal price", status: "pending" },
+  { agent: "report", label: "Report Generation", description: "Compiling final pricing strategy report", status: "pending" },
 ];
 
 interface AnalysisRun {

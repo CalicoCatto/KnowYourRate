@@ -58,7 +58,7 @@ a = Analysis(
         "app.agents.orchestrator",
         "app.agents.market_data",
         "app.agents.creator_profile",
-        "app.agents.brand_strategy",
+        "app.utils.pricing_tables",
         "app.agents.debate",
         "app.agents.report",
         "app.llm",

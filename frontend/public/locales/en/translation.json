@@ -58,10 +58,12 @@
     "avgViewsLabel": "Average Views per Video",
     "engagementRateLabel": "Engagement Rate (%)",
     "selectNiche": "Select content niche",
-    "brandInfo": "Brand Information",
+    "brandInfo": "Brand & Deal Conditions",
     "brandName": "Brand Name",
-    "brandNamePlaceholder": "Enter brand name...",
-    "dealType": "Deal Type",
+    "brandNamePlaceholder": "e.g. NordVPN, Skillshare, Hello Fresh...",
+    "dealType": "Content Type",
+    "usageRights": "Usage Rights",
+    "exclusivity": "Exclusivity",
     "startAnalysis": "Start Analysis",
     "starting": "Starting...",
     "handlePlaceholder": "Creator handle or username",
@@ -70,7 +72,9 @@
     "switchManual": "No API key? Enter data manually instead",
     "switchApi": "Switch to URL lookup",
     "manualYoutubeSubtitle": "Enter your YouTube channel stats manually.",
-    "fetchFailed": "Failed to fetch profile. You can enter data manually instead."
+    "fetchFailed": "Failed to fetch profile. You can enter data manually instead.",
+    "isFirstBrandDeal": "First brand deal",
+    "isFirstBrandDealDesc": "This is my first time working with a brand"
   },
   "analysis": {
     "title": "Analysis in Progress",
@@ -80,9 +84,8 @@
     "viewReport": "View Report",
     "estimatedTime": "Estimated time remaining",
     "agents": {
-      "market_data": "Market Research",
       "creator_profile": "Creator Analysis",
-      "brand_strategy": "Brand Strategy",
+      "market_intel": "Market Intelligence",
       "debate": "Price Debate",
       "report": "Report Generation"
     },
@@ -90,16 +93,17 @@
       "pending": "Pending",
       "running": "Running",
       "completed": "Completed",
-      "failed": "Failed"
+      "failed": "Failed",
+      "skipped": "Skipped"
     }
   },
   "report": {
     "title": "Pricing Report",
     "executiveSummary": "Executive Summary",
     "priceRange": "Recommended Price Range",
-    "low": "Low",
-    "mid": "Recommended",
-    "high": "Premium",
+    "low": "Walk-away",
+    "mid": "Fair Market",
+    "high": "Anchor (Ask)",
     "contentBreakdown": "Content Type Breakdown",
     "contentType": "Content Type",
     "priceRangeCol": "Price Range",
@@ -114,19 +118,21 @@
     "showDetailed": "Detailed Analysis",
     "showSummary": "Summary View",
     "detailedTitle": "Full Analysis Chain",
-    "detailedSubtitle": "Complete reasoning from all 5 AI agents that led to the final pricing recommendation.",
+    "detailedSubtitle": "Complete reasoning from all AI agents — CPM calculation, market intelligence, adversarial debate, and final recommendation.",
     "detailed": {
-      "marketData": "Market Research Data",
-      "creatorAnalysis": "Creator Profile Analysis",
-      "brandStrategy": "Brand Strategy Analysis",
-      "debate": "Price Negotiation Debate",
-      "finalReport": "Final Synthesized Report"
+      "creatorAnalysis": "Creator Profile & CPM Analysis",
+      "marketIntel": "Market Intelligence & Deal Conditions",
+      "debate": "Bull vs Bear Price Debate",
+      "finalReport": "Final Strategy Report"
     },
     "severity": {
       "low": "Low Risk",
       "medium": "Medium Risk",
       "high": "High Risk"
     },
+    "packageTiers": "Package Tiers",
+    "savings": "Savings",
+    "negotiationScripts": "Negotiation Scripts",
     "copyPoint": "Copy",
     "copied": "Copied!"
   },

@@ -5,8 +5,14 @@ import { lookupCreator, startAnalysis } from "@/api/client";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useCreatorStore } from "@/store/creatorStore";
 import PlatformSelector from "@/components/PlatformSelector";
-import type { Platform, DealType } from "@/types";
-import { DEAL_TYPE_LABELS, NICHE_OPTIONS } from "@/types";
+import type { Platform, DealType, UsageRights, Exclusivity } from "@/types";
+import {
+  DEAL_TYPE_LABELS,
+  NICHE_OPTIONS,
+  NICHE_LABELS,
+  USAGE_RIGHTS_LABELS,
+  EXCLUSIVITY_LABELS,
+} from "@/types";
 
 export default function CreatorPage() {
   const { t } = useTranslation();
@@ -51,7 +57,7 @@ export default function CreatorPage() {
     subscriber_count: parseInt(store.manualFollowers) || 0,
     avg_views: parseInt(store.manualAvgViews) || 0,
     engagement_rate: parseFloat(store.manualEngagement) || 0,
-    content_niche: store.manualNiche || "general",
+    content_niche: store.manualNiche || "lifestyle_vlog",
   });
 
   /* Start analysis */
@@ -74,6 +80,9 @@ export default function CreatorPage() {
         manual_data: manualData ?? null,
         brand_name: store.brandName.trim(),
         deal_type: store.dealType,
+        usage_rights: store.usageRights,
+        exclusivity: store.exclusivity,
+        is_first_brand_deal: store.isFirstBrandDeal,
         language,
       });
 
@@ -264,7 +273,7 @@ export default function CreatorPage() {
                   <option value="">{t("creator.selectNiche")}</option>
                   {NICHE_OPTIONS.map((n) => (
                     <option key={n} value={n}>
-                      {n.charAt(0).toUpperCase() + n.slice(1)}
+                      {NICHE_LABELS[n] ?? n}
                     </option>
                   ))}
                 </select>
@@ -273,7 +282,7 @@ export default function CreatorPage() {
           </div>
         )}
 
-        {/* Brand info */}
+        {/* Brand & deal conditions */}
         {store.platform && (
           <div className="animate-fade-in space-y-5 rounded-2xl border border-gray-200 bg-gray-50 p-6 dark:border-gray-800 dark:bg-gray-900">
             <h4 className="font-semibold text-gray-900 dark:text-white">
@@ -290,18 +299,51 @@ export default function CreatorPage() {
               />
             </div>
 
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <label className="label">{t("creator.dealType")}</label>
+                <select
+                  className="select"
+                  value={store.dealType}
+                  onChange={(e) => store.setDealType(e.target.value as DealType)}
+                >
+                  {(
+                    Object.entries(DEAL_TYPE_LABELS) as [DealType, string][]
+                  ).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="label">{t("creator.usageRights")}</label>
+                <select
+                  className="select"
+                  value={store.usageRights}
+                  onChange={(e) => store.setUsageRights(e.target.value as UsageRights)}
+                >
+                  {(
+                    Object.entries(USAGE_RIGHTS_LABELS) as [UsageRights, string][]
+                  ).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label className="label">{t("creator.dealType")}</label>
+              <label className="label">{t("creator.exclusivity")}</label>
               <select
                 className="select"
-                value={store.dealType}
-                onChange={(e) => store.setDealType(e.target.value as DealType)}
+                value={store.exclusivity}
+                onChange={(e) => store.setExclusivity(e.target.value as Exclusivity)}
               >
                 {(
-                  Object.entries(DEAL_TYPE_LABELS) as [
-                    DealType,
-                    string,
-                  ][]
+                  Object.entries(EXCLUSIVITY_LABELS) as [Exclusivity, string][]
                 ).map(([value, label]) => (
                   <option key={value} value={value}>
                     {label}
@@ -309,6 +351,23 @@ export default function CreatorPage() {
                 ))}
               </select>
             </div>
+
+            <label className="flex cursor-pointer items-center gap-3">
+              <input
+                type="checkbox"
+                className="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 dark:border-gray-600"
+                checked={store.isFirstBrandDeal}
+                onChange={(e) => store.setIsFirstBrandDeal(e.target.checked)}
+              />
+              <div>
+                <span className="text-sm font-medium text-gray-900 dark:text-white">
+                  {t("creator.isFirstBrandDeal")}
+                </span>
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  {t("creator.isFirstBrandDealDesc")}
+                </p>
+              </div>
+            </label>
           </div>
         )}
 

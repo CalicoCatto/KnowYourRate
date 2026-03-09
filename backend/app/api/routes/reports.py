@@ -111,8 +111,9 @@ async def create_report(
 
     # Collect all agent outputs for the detailed view
     agent_outputs = {
-        "market_data": run.market_data,
         "creator_analysis": run.creator_analysis,
+        "market_intel": run.market_data,
+        "market_data": run.market_data,
         "brand_analysis": run.brand_analysis,
         "debate_result": run.debate_result,
     }

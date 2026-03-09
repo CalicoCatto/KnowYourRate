@@ -13,10 +13,34 @@ interface SectionProps {
   icon: React.ReactNode;
   children: React.ReactNode;
   defaultOpen?: boolean;
+  skipped?: boolean;
 }
 
-function Section({ title, step, icon, children, defaultOpen = false }: SectionProps) {
+function Section({ title, step, icon, children, defaultOpen = false, skipped = false }: SectionProps) {
   const [open, setOpen] = useState(defaultOpen);
+
+  if (skipped) {
+    return (
+      <div className="card overflow-hidden opacity-50">
+        <div className="flex items-center gap-4">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+            {icon}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+                Step {step}
+              </span>
+              <h3 className="font-semibold text-gray-400 line-through dark:text-gray-500">{title}</h3>
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-800">
+                Skipped (Fast Track)
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="card overflow-hidden">
@@ -64,6 +88,10 @@ function RenderData({ data }: { data: unknown }) {
     );
   }
 
+  if (typeof data === "number" || typeof data === "boolean") {
+    return <p className="text-sm text-gray-700 dark:text-gray-300">{String(data)}</p>;
+  }
+
   if (typeof data === "object" && !Array.isArray(data)) {
     const obj = data as Record<string, unknown>;
     return (
@@ -77,8 +105,8 @@ function RenderData({ data }: { data: unknown }) {
               <p className="whitespace-pre-line text-sm leading-relaxed text-gray-700 dark:text-gray-300">
                 {value}
               </p>
-            ) : typeof value === "number" ? (
-              <p className="text-sm text-gray-700 dark:text-gray-300">{value}</p>
+            ) : typeof value === "number" || typeof value === "boolean" ? (
+              <p className="text-sm text-gray-700 dark:text-gray-300">{String(value)}</p>
             ) : Array.isArray(value) ? (
               <ul className="list-inside list-disc space-y-1 text-sm text-gray-700 dark:text-gray-300">
                 {value.map((item, i) => (
@@ -116,6 +144,9 @@ function formatKey(key: string): string {
 export default function DetailedAnalysis({ agentOutputs, finalReport }: Props) {
   const { t } = useTranslation();
 
+  const hasMarketIntel = agentOutputs?.market_intel != null || agentOutputs?.market_data != null;
+  const hasDebate = agentOutputs?.debate_result != null;
+
   return (
     <div className="space-y-4">
       {/* Analysis chain header */}
@@ -135,24 +166,11 @@ export default function DetailedAnalysis({ agentOutputs, finalReport }: Props) {
         </div>
       </div>
 
-      {/* Step 1: Market Data */}
-      <Section
-        title={t("report.detailed.marketData")}
-        step={1}
-        defaultOpen
-        icon={
-          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
-          </svg>
-        }
-      >
-        <RenderData data={agentOutputs?.market_data} />
-      </Section>
-
-      {/* Step 2: Creator Analysis */}
+      {/* Step 1: Creator Analysis (always runs) */}
       <Section
         title={t("report.detailed.creatorAnalysis")}
-        step={2}
+        step={1}
+        defaultOpen
         icon={
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
@@ -162,23 +180,25 @@ export default function DetailedAnalysis({ agentOutputs, finalReport }: Props) {
         <RenderData data={agentOutputs?.creator_analysis} />
       </Section>
 
-      {/* Step 3: Brand Strategy */}
+      {/* Step 2: Market Intelligence */}
       <Section
-        title={t("report.detailed.brandStrategy")}
-        step={3}
+        title={t("report.detailed.marketIntel")}
+        step={2}
+        skipped={!hasMarketIntel}
         icon={
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008zm0 3h.008v.008h-.008v-.008z" />
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
           </svg>
         }
       >
-        <RenderData data={agentOutputs?.brand_analysis} />
+        <RenderData data={agentOutputs?.market_intel ?? agentOutputs?.market_data} />
       </Section>
 
-      {/* Step 4: Price Debate */}
+      {/* Step 3: Price Debate */}
       <Section
         title={t("report.detailed.debate")}
-        step={4}
+        step={3}
+        skipped={!hasDebate}
         icon={
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />
@@ -188,10 +208,10 @@ export default function DetailedAnalysis({ agentOutputs, finalReport }: Props) {
         <RenderData data={agentOutputs?.debate_result} />
       </Section>
 
-      {/* Step 5: Final Report */}
+      {/* Step 4: Final Report */}
       <Section
         title={t("report.detailed.finalReport")}
-        step={5}
+        step={4}
         icon={
           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />

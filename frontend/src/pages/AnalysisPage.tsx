@@ -20,11 +20,14 @@ export default function AnalysisPage() {
   const error = run?.error ?? null;
   const result = run?.result ?? null;
 
-  const progress =
-    steps.filter((s) => s.status === "completed").length / steps.length;
+  const activeSteps = steps.filter((s) => s.status !== "skipped");
+  const completedSteps = activeSteps.filter((s) => s.status === "completed");
+  const progress = activeSteps.length > 0
+    ? completedSteps.length / activeSteps.length
+    : 0;
 
-  // All 5 agents must be completed before showing the report button
-  const allCompleted = steps.length > 0 && steps.every((s) => s.status === "completed");
+  // All active (non-skipped) agents must be completed before showing the report button
+  const allCompleted = activeSteps.length > 0 && activeSteps.every((s) => s.status === "completed");
 
   return (
     <div className="mx-auto max-w-2xl animate-slide-up">
