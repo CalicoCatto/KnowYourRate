@@ -26,7 +26,15 @@
     "getApiKey": "获取API密钥",
     "configured": "已配置",
     "reconfigure": "重新配置",
-    "currentProvider": "当前服务商"
+    "currentProvider": "当前服务商",
+    "youtubeApiKey": "YouTube Data API Key",
+    "youtubeApiKeyDesc": "用于自动获取 YouTube 频道数据。未配置时仍可手动输入数据。",
+    "youtubeApiKeyPlaceholder": "AIzaSy...",
+    "youtubeApiKeyReplace": "输入新 Key 以替换...",
+    "youtubeApiKeyHelp": "从以下地址免费获取 API Key：",
+    "optional": "可选",
+    "save": "保存",
+    "saved": "已保存！"
   },
   "creator": {
     "title": "创作者信息",
@@ -115,7 +123,8 @@
     "error": "出了点问题",
     "retry": "重试",
     "back": "返回",
-    "cancel": "取消"
+    "cancel": "取消",
+    "delete": "删除"
   },
   "language": {
     "en": "English",

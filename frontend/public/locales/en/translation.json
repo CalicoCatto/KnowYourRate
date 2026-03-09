@@ -26,7 +26,15 @@
     "getApiKey": "Get API Key",
     "configured": "Configured",
     "reconfigure": "Reconfigure",
-    "currentProvider": "Current Provider"
+    "currentProvider": "Current Provider",
+    "youtubeApiKey": "YouTube Data API Key",
+    "youtubeApiKeyDesc": "Required for automatic YouTube channel data lookup. Without it, you can still enter data manually.",
+    "youtubeApiKeyPlaceholder": "AIzaSy...",
+    "youtubeApiKeyReplace": "Enter new key to replace...",
+    "youtubeApiKeyHelp": "Get a free API key from",
+    "optional": "Optional",
+    "save": "Save",
+    "saved": "Saved!"
   },
   "creator": {
     "title": "Creator Details",
@@ -115,7 +123,8 @@
     "error": "Something went wrong",
     "retry": "Retry",
     "back": "Back",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "delete": "Delete"
   },
   "language": {
     "en": "English",

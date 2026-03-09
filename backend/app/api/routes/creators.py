@@ -1,16 +1,29 @@
 from typing import Annotated
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.deps import get_db, get_settings
 from app.config import Settings
 from app.models.creator import Creator
+from app.models.settings import SettingsModel
 from app.schemas.creator import CreatorLookupRequest, CreatorProfile
+from app.services.encryption import decrypt_value
 from app.services.tiktok import get_tiktok_form_schema
-from app.services.youtube import fetch_channel_info
 
 router = APIRouter()
+
+
+async def _get_youtube_api_key(db: AsyncSession, settings: Settings) -> str | None:
+    """Get YouTube API key: first from DB, then from environment variable."""
+    row = await db.execute(
+        select(SettingsModel).where(SettingsModel.key == "youtube_api_key")
+    )
+    setting = row.scalar_one_or_none()
+    if setting:
+        return decrypt_value(setting.value, settings.ENCRYPTION_SECRET)
+    return settings.YOUTUBE_API_KEY
 
 
 @router.post("/lookup", response_model=CreatorProfile)
@@ -21,10 +34,19 @@ async def lookup_creator(
 ) -> CreatorProfile:
     """Look up a creator by platform and channel URL/handle."""
     if body.platform == "youtube":
+        youtube_key = await _get_youtube_api_key(db, settings)
+        if not youtube_key:
+            raise HTTPException(
+                status_code=400,
+                detail="YouTube API Key not configured. Please add it in Settings, or use manual input.",
+            )
+
         try:
+            from app.services.youtube import fetch_channel_info
+
             data = await fetch_channel_info(
                 body.channel_url,
-                api_key=settings.YOUTUBE_API_KEY,
+                api_key=youtube_key,
             )
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"YouTube lookup failed: {str(e)}")

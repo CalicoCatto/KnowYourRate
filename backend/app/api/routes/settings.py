@@ -138,6 +138,59 @@ async def test_provider(
         return TestResult(success=False, message=f"Connection failed: {str(e)}")
 
 
+@router.post("/youtube-key")
+async def save_youtube_key(
+    body: dict,
+    db: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> dict:
+    """Save the YouTube Data API key (encrypted)."""
+    api_key = body.get("api_key", "").strip()
+    if not api_key:
+        raise HTTPException(status_code=400, detail="API key is required")
+
+    encrypted = encrypt_value(api_key, settings.ENCRYPTION_SECRET)
+    row = await db.execute(select(SettingsModel).where(SettingsModel.key == "youtube_api_key"))
+    existing = row.scalar_one_or_none()
+    if existing:
+        existing.value = encrypted
+    else:
+        db.add(SettingsModel(key="youtube_api_key", value=encrypted))
+    await db.flush()
+
+    return {"status": "saved", "api_key_masked": _mask_key(api_key)}
+
+
+@router.get("/youtube-key")
+async def get_youtube_key(
+    db: Annotated[AsyncSession, Depends(get_db)],
+    settings: Annotated[Settings, Depends(get_settings)],
+) -> dict:
+    """Get the stored YouTube API key (masked)."""
+    row = await db.execute(select(SettingsModel).where(SettingsModel.key == "youtube_api_key"))
+    setting = row.scalar_one_or_none()
+    if not setting:
+        # Fall back to environment variable
+        if settings.YOUTUBE_API_KEY:
+            return {"has_key": True, "api_key_masked": _mask_key(settings.YOUTUBE_API_KEY)}
+        return {"has_key": False, "api_key_masked": ""}
+
+    decrypted = decrypt_value(setting.value, settings.ENCRYPTION_SECRET)
+    return {"has_key": True, "api_key_masked": _mask_key(decrypted)}
+
+
+@router.delete("/youtube-key")
+async def delete_youtube_key(
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> dict:
+    """Remove the stored YouTube API key."""
+    row = await db.execute(select(SettingsModel).where(SettingsModel.key == "youtube_api_key"))
+    existing = row.scalar_one_or_none()
+    if existing:
+        await db.delete(existing)
+    return {"status": "deleted"}
+
+
 def _mask_key(key: str) -> str:
     """Mask an API key, showing only the first 4 and last 4 characters."""
     if len(key) <= 8:

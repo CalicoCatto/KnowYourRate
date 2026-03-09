@@ -55,6 +55,24 @@ export async function testProvider(
 }
 
 /* ------------------------------------------------------------------ */
+/*  YouTube API Key                                                    */
+/* ------------------------------------------------------------------ */
+
+export async function getYoutubeKey(): Promise<{ has_key: boolean; api_key_masked: string }> {
+  const { data } = await api.get("/settings/youtube-key");
+  return data;
+}
+
+export async function saveYoutubeKey(apiKey: string): Promise<{ api_key_masked: string }> {
+  const { data } = await api.post("/settings/youtube-key", { api_key: apiKey });
+  return data;
+}
+
+export async function deleteYoutubeKey(): Promise<void> {
+  await api.delete("/settings/youtube-key");
+}
+
+/* ------------------------------------------------------------------ */
 /*  Creators                                                           */
 /* ------------------------------------------------------------------ */
 
