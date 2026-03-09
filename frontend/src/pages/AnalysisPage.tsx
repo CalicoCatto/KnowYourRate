@@ -1,13 +1,30 @@
+import { useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useAnalysis } from "@/hooks/useAnalysis";
+import { useAnalysisStore } from "@/store/analysisStore";
 import AgentProgress from "@/components/AgentProgress";
 
 export default function AnalysisPage() {
   const { runId } = useParams<{ runId: string }>();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { steps, progress, done, error, result } = useAnalysis(runId);
+  const trackRun = useAnalysisStore((s) => s.trackRun);
+  const run = useAnalysisStore((s) => (runId ? s.runs[runId] : undefined));
+
+  useEffect(() => {
+    if (runId) trackRun(runId);
+  }, [runId, trackRun]);
+
+  const steps = run?.steps ?? [];
+  const done = run?.done ?? false;
+  const error = run?.error ?? null;
+  const result = run?.result ?? null;
+
+  const progress =
+    steps.filter((s) => s.status === "completed").length / steps.length;
+
+  // All 5 agents must be completed before showing the report button
+  const allCompleted = steps.length > 0 && steps.every((s) => s.status === "completed");
 
   return (
     <div className="mx-auto max-w-2xl animate-slide-up">
@@ -66,7 +83,7 @@ export default function AnalysisPage() {
       </div>
 
       {/* Actions */}
-      {done && !error && result && (
+      {done && !error && allCompleted && result && (
         <div className="mt-8 animate-slide-up">
           <button
             onClick={() => navigate(`/report/${runId}`)}

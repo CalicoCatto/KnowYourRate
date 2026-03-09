@@ -168,7 +168,8 @@ async def stream_status(run_id: UUID) -> StreamingResponse:
                 yield f"data: {data}\n\n"
                 sent += 1
 
-                if event.get("status") in ("completed", "failed"):
+                # Only close the stream when the whole pipeline finishes
+                if event.get("agent") == "pipeline" and event.get("status") in ("completed", "failed"):
                     yield f"data: {json.dumps({'done': True})}\n\n"
                     return
 
