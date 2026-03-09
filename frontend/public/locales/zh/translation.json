@@ -1,0 +1,118 @@
+{
+  "app": {
+    "title": "KnowYourRate",
+    "tagline": "AI驱动的创作者赞助定价智能平台",
+    "footer": "KnowYourRate - 赞助情报平台"
+  },
+  "nav": {
+    "setup": "设置",
+    "creator": "创作者",
+    "analysis": "分析",
+    "report": "报告"
+  },
+  "setup": {
+    "title": "开始使用",
+    "subtitle": "选择AI服务商并输入API密钥，开始分析赞助费率。",
+    "selectProvider": "选择AI服务商",
+    "apiKey": "API密钥",
+    "apiKeyPlaceholder": "输入您的API密钥...",
+    "model": "模型",
+    "selectModel": "选择模型",
+    "testConnection": "测试连接",
+    "testing": "测试中...",
+    "testSuccess": "连接成功！",
+    "testFailed": "连接失败",
+    "continue": "继续",
+    "getApiKey": "获取API密钥",
+    "configured": "已配置",
+    "reconfigure": "重新配置",
+    "currentProvider": "当前服务商"
+  },
+  "creator": {
+    "title": "创作者信息",
+    "subtitle": "告诉我们您要评估的创作者和品牌合作。",
+    "selectPlatform": "选择平台",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "channelUrl": "频道链接或用户名",
+    "channelUrlPlaceholder": "https://youtube.com/@handle 或 @handle",
+    "fetchProfile": "获取资料",
+    "fetching": "获取中...",
+    "profilePreview": "创作者资料",
+    "subscribers": "订阅者",
+    "avgViews": "平均播放量",
+    "engagementRate": "互动率",
+    "niche": "内容领域",
+    "manualEntry": "手动输入",
+    "manualSubtitle": "TikTok API不可用，请手动输入创作者数据。",
+    "followerCount": "粉丝数",
+    "avgViewsLabel": "平均每视频播放量",
+    "engagementRateLabel": "互动率 (%)",
+    "selectNiche": "选择内容领域",
+    "brandInfo": "品牌信息",
+    "brandName": "品牌名称",
+    "brandNamePlaceholder": "输入品牌名称...",
+    "dealType": "合作类型",
+    "startAnalysis": "开始分析",
+    "starting": "启动中...",
+    "handlePlaceholder": "创作者用户名"
+  },
+  "analysis": {
+    "title": "分析进行中",
+    "subtitle": "我们的AI代理正在分析赞助合作。通常需要1-3分钟。",
+    "completed": "分析完成！",
+    "failed": "分析失败",
+    "viewReport": "查看报告",
+    "estimatedTime": "预计剩余时间",
+    "agents": {
+      "market_data": "市场研究",
+      "creator_profile": "创作者分析",
+      "brand_strategy": "品牌策略",
+      "debate": "价格辩论",
+      "report": "报告生成"
+    },
+    "status": {
+      "pending": "等待中",
+      "running": "运行中",
+      "completed": "已完成",
+      "failed": "失败"
+    }
+  },
+  "report": {
+    "title": "定价报告",
+    "executiveSummary": "概要摘要",
+    "priceRange": "建议价格区间",
+    "low": "最低",
+    "mid": "建议",
+    "high": "高端",
+    "contentBreakdown": "内容类型明细",
+    "contentType": "内容类型",
+    "priceRangeCol": "价格区间",
+    "negotiation": "谈判要点",
+    "redFlags": "合同风险提示",
+    "marketContext": "市场背景",
+    "saveReport": "保存报告",
+    "saving": "保存中...",
+    "saved": "报告已保存！",
+    "newAnalysis": "新建分析",
+    "export": "导出 / 打印",
+    "severity": {
+      "low": "低风险",
+      "medium": "中风险",
+      "high": "高风险"
+    },
+    "copyPoint": "复制",
+    "copied": "已复制！"
+  },
+  "common": {
+    "loading": "加载中...",
+    "error": "出了点问题",
+    "retry": "重试",
+    "back": "返回",
+    "cancel": "取消"
+  },
+  "language": {
+    "en": "English",
+    "zh": "中文"
+  }
+}

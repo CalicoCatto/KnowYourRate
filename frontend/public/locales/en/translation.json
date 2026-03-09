@@ -1,0 +1,118 @@
+{
+  "app": {
+    "title": "KnowYourRate",
+    "tagline": "AI-Powered Creator Sponsorship Pricing Intelligence",
+    "footer": "KnowYourRate - Sponsorship Intelligence Platform"
+  },
+  "nav": {
+    "setup": "Setup",
+    "creator": "Creator",
+    "analysis": "Analysis",
+    "report": "Report"
+  },
+  "setup": {
+    "title": "Get Started",
+    "subtitle": "Choose your AI provider and enter your API key to begin analyzing sponsorship rates.",
+    "selectProvider": "Select AI Provider",
+    "apiKey": "API Key",
+    "apiKeyPlaceholder": "Enter your API key...",
+    "model": "Model",
+    "selectModel": "Select model",
+    "testConnection": "Test Connection",
+    "testing": "Testing...",
+    "testSuccess": "Connection successful!",
+    "testFailed": "Connection failed",
+    "continue": "Continue",
+    "getApiKey": "Get API Key",
+    "configured": "Configured",
+    "reconfigure": "Reconfigure",
+    "currentProvider": "Current Provider"
+  },
+  "creator": {
+    "title": "Creator Details",
+    "subtitle": "Tell us about the creator and the brand deal you're evaluating.",
+    "selectPlatform": "Select Platform",
+    "youtube": "YouTube",
+    "tiktok": "TikTok",
+    "channelUrl": "Channel URL or Handle",
+    "channelUrlPlaceholder": "https://youtube.com/@handle or @handle",
+    "fetchProfile": "Fetch Profile",
+    "fetching": "Fetching...",
+    "profilePreview": "Creator Profile",
+    "subscribers": "Subscribers",
+    "avgViews": "Avg. Views",
+    "engagementRate": "Engagement Rate",
+    "niche": "Content Niche",
+    "manualEntry": "Manual Entry",
+    "manualSubtitle": "TikTok API is not available. Please enter creator data manually.",
+    "followerCount": "Follower Count",
+    "avgViewsLabel": "Average Views per Video",
+    "engagementRateLabel": "Engagement Rate (%)",
+    "selectNiche": "Select content niche",
+    "brandInfo": "Brand Information",
+    "brandName": "Brand Name",
+    "brandNamePlaceholder": "Enter brand name...",
+    "dealType": "Deal Type",
+    "startAnalysis": "Start Analysis",
+    "starting": "Starting...",
+    "handlePlaceholder": "Creator handle or username"
+  },
+  "analysis": {
+    "title": "Analysis in Progress",
+    "subtitle": "Our AI agents are analyzing the sponsorship deal. This typically takes 1-3 minutes.",
+    "completed": "Analysis Complete!",
+    "failed": "Analysis Failed",
+    "viewReport": "View Report",
+    "estimatedTime": "Estimated time remaining",
+    "agents": {
+      "market_data": "Market Research",
+      "creator_profile": "Creator Analysis",
+      "brand_strategy": "Brand Strategy",
+      "debate": "Price Debate",
+      "report": "Report Generation"
+    },
+    "status": {
+      "pending": "Pending",
+      "running": "Running",
+      "completed": "Completed",
+      "failed": "Failed"
+    }
+  },
+  "report": {
+    "title": "Pricing Report",
+    "executiveSummary": "Executive Summary",
+    "priceRange": "Recommended Price Range",
+    "low": "Low",
+    "mid": "Recommended",
+    "high": "Premium",
+    "contentBreakdown": "Content Type Breakdown",
+    "contentType": "Content Type",
+    "priceRangeCol": "Price Range",
+    "negotiation": "Negotiation Talking Points",
+    "redFlags": "Contract Red Flags",
+    "marketContext": "Market Context",
+    "saveReport": "Save Report",
+    "saving": "Saving...",
+    "saved": "Report Saved!",
+    "newAnalysis": "New Analysis",
+    "export": "Export / Print",
+    "severity": {
+      "low": "Low Risk",
+      "medium": "Medium Risk",
+      "high": "High Risk"
+    },
+    "copyPoint": "Copy",
+    "copied": "Copied!"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "retry": "Retry",
+    "back": "Back",
+    "cancel": "Cancel"
+  },
+  "language": {
+    "en": "English",
+    "zh": "Chinese"
+  }
+}
