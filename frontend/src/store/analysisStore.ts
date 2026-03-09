@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { subscribeToStatus, getAnalysisResult } from "@/api/client";
-import type { AgentStep, AgentName, AgentStatus, AnalysisResult, SSEEvent } from "@/types";
+import type { AgentStep, AgentStatus, AnalysisResult, SSEEvent } from "@/types";
 
 const DEFAULT_STEPS: AgentStep[] = [
   { agent: "market_data", label: "Market Research", description: "Gathering current sponsorship market data and benchmarks", status: "pending" },
@@ -18,92 +18,75 @@ interface AnalysisRun {
 }
 
 interface AnalysisState {
-  /** All tracked runs keyed by runId */
   runs: Record<string, AnalysisRun>;
-
-  /** Start tracking a run (subscribes to SSE). Idempotent — won't re-subscribe. */
   trackRun: (runId: string) => void;
-
-  /** Get run state (returns undefined if not tracked) */
-  getRun: (runId: string) => AnalysisRun | undefined;
 }
 
-/** Active SSE cleanup functions — kept outside Zustand to avoid serialization issues */
 const _activeSubscriptions = new Set<string>();
+
+function newRun(): AnalysisRun {
+  return {
+    steps: DEFAULT_STEPS.map((s) => ({ ...s })),
+    done: false,
+    error: null,
+    result: null,
+  };
+}
+
+/** Helper: update a single run inside state, safely handling missing entries */
+function updateRun(
+  state: AnalysisState,
+  runId: string,
+  patch: Partial<AnalysisRun>,
+): AnalysisState {
+  const prev = state.runs[runId] ?? newRun();
+  return { ...state, runs: { ...state.runs, [runId]: { ...prev, ...patch } } };
+}
 
 export const useAnalysisStore = create<AnalysisState>()((set, get) => ({
   runs: {},
 
   trackRun: (runId: string) => {
-    // Already tracking this run
     if (_activeSubscriptions.has(runId)) return;
 
     const existing = get().runs[runId];
-    if (existing?.done) return; // Already finished
+    if (existing?.done) return;
 
     _activeSubscriptions.add(runId);
 
-    // Initialize run state if not present
     if (!existing) {
-      set((s) => ({
-        runs: {
-          ...s.runs,
-          [runId]: {
-            steps: DEFAULT_STEPS.map((s) => ({ ...s })),
-            done: false,
-            error: null,
-            result: null,
-          },
-        },
-      }));
+      set((s) => updateRun(s, runId, newRun()));
     }
 
     const handleEvent = (evt: SSEEvent) => {
       if (evt.error) {
-        set((s) => ({
-          runs: {
-            ...s.runs,
-            [runId]: { ...s.runs[runId], error: evt.error!, done: true },
-          },
-        }));
+        set((s) => updateRun(s, runId, { error: evt.error!, done: true }));
         _activeSubscriptions.delete(runId);
         return;
       }
 
       if (evt.done) {
-        const run = get().runs[runId];
-        set((s) => ({
-          runs: { ...s.runs, [runId]: { ...run, done: true } },
-        }));
+        set((s) => updateRun(s, runId, { done: true }));
         _activeSubscriptions.delete(runId);
 
-        // Fetch the full result
         getAnalysisResult(runId)
           .then((result) => {
-            set((s) => ({
-              runs: { ...s.runs, [runId]: { ...s.runs[runId], result } },
-            }));
+            set((s) => updateRun(s, runId, { result }));
           })
           .catch((err) => {
-            set((s) => ({
-              runs: {
-                ...s.runs,
-                [runId]: {
-                  ...s.runs[runId],
-                  error: err instanceof Error ? err.message : "Failed to fetch result",
-                },
-              },
-            }));
+            set((s) =>
+              updateRun(s, runId, {
+                error: err instanceof Error ? err.message : "Failed to fetch result",
+              }),
+            );
           });
         return;
       }
 
       if (evt.agent && evt.status) {
         set((s) => {
-          const run = s.runs[runId];
-          if (!run) return s;
-
-          const newSteps = run.steps.map((step) =>
+          const run = s.runs[runId] ?? newRun();
+          const steps = run.steps.map((step) =>
             step.agent === evt.agent
               ? { ...step, status: evt.status as AgentStatus }
               : step,
@@ -119,18 +102,11 @@ export const useAnalysisStore = create<AnalysisState>()((set, get) => ({
             }
           }
 
-          return {
-            runs: {
-              ...s.runs,
-              [runId]: { ...run, steps: newSteps, done, error },
-            },
-          };
+          return updateRun(s, runId, { steps, done, error });
         });
       }
     };
 
     subscribeToStatus(runId, handleEvent);
   },
-
-  getRun: (runId: string) => get().runs[runId],
 }));
