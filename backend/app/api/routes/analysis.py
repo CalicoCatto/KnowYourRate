@@ -36,7 +36,11 @@ async def _run_analysis(
     """Execute the agent pipeline in the background."""
     from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 
-    bg_engine = create_async_engine(db_url)
+    engine_kwargs: dict = {}
+    if db_url.startswith("sqlite"):
+        engine_kwargs["connect_args"] = {"check_same_thread": False}
+
+    bg_engine = create_async_engine(db_url, **engine_kwargs)
     bg_session_factory = async_sessionmaker(bg_engine, class_=AsyncSession, expire_on_commit=False)
 
     async with bg_session_factory() as session:
@@ -123,7 +127,7 @@ async def start_analysis(
         status="pending",
     )
     db.add(run)
-    await db.flush()
+    await db.commit()
 
     from app.config import get_settings
     db_url = get_settings().DATABASE_URL
