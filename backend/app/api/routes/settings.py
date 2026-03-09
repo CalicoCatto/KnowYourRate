@@ -138,6 +138,20 @@ async def test_provider(
         return TestResult(success=False, message=f"Connection failed: {str(e)}")
 
 
+@router.post("/youtube-key/test")
+async def test_youtube_key(
+    body: dict,
+) -> dict:
+    """Test a YouTube Data API key."""
+    api_key = body.get("api_key", "").strip()
+    if not api_key:
+        return {"success": False, "message": "API key is required"}
+
+    from app.services.youtube import test_youtube_key as _test
+
+    return await _test(api_key)
+
+
 @router.post("/youtube-key")
 async def save_youtube_key(
     body: dict,

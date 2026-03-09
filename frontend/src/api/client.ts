@@ -68,6 +68,11 @@ export async function saveYoutubeKey(apiKey: string): Promise<{ api_key_masked: 
   return data;
 }
 
+export async function testYoutubeKey(apiKey: string): Promise<{ success: boolean; message: string }> {
+  const { data } = await api.post("/settings/youtube-key/test", { api_key: apiKey });
+  return data;
+}
+
 export async function deleteYoutubeKey(): Promise<void> {
   await api.delete("/settings/youtube-key");
 }

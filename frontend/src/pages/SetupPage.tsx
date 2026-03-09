@@ -8,6 +8,7 @@ import {
   testProvider,
   getYoutubeKey,
   saveYoutubeKey,
+  testYoutubeKey,
   deleteYoutubeKey,
 } from "@/api/client";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -39,6 +40,8 @@ export default function SetupPage() {
   const [ytMasked, setYtMasked] = useState("");
   const [ytSaving, setYtSaving] = useState(false);
   const [ytSaved, setYtSaved] = useState(false);
+  const [ytTesting, setYtTesting] = useState(false);
+  const [ytTestResult, setYtTestResult] = useState<{ success: boolean; message: string } | null>(null);
 
   /* Load providers and existing config */
   useEffect(() => {
@@ -92,6 +95,21 @@ export default function SetupPage() {
     }
   };
 
+  /* Test YouTube API Key */
+  const handleTestYtKey = async () => {
+    if (!ytKey.trim()) return;
+    setYtTesting(true);
+    setYtTestResult(null);
+    try {
+      const result = await testYoutubeKey(ytKey.trim());
+      setYtTestResult(result);
+    } catch {
+      setYtTestResult({ success: false, message: "Network error" });
+    } finally {
+      setYtTesting(false);
+    }
+  };
+
   /* Save YouTube API Key */
   const handleSaveYtKey = async () => {
     if (!ytKey.trim()) return;
@@ -102,6 +120,7 @@ export default function SetupPage() {
       setYtMasked(result.api_key_masked);
       setYtKey("");
       setYtSaved(true);
+      setYtTestResult(null);
       setTimeout(() => setYtSaved(false), 3000);
     } catch (err) {
       console.error(err);
@@ -320,21 +339,49 @@ export default function SetupPage() {
             </div>
           )}
 
-          <div className="flex gap-3">
+          <div className="space-y-3">
             <input
               type="password"
-              className="input flex-1 font-mono"
+              className="input w-full font-mono"
               placeholder={ytHasKey ? t("setup.youtubeApiKeyReplace") : t("setup.youtubeApiKeyPlaceholder")}
               value={ytKey}
-              onChange={(e) => setYtKey(e.target.value)}
+              onChange={(e) => {
+                setYtKey(e.target.value);
+                setYtTestResult(null);
+              }}
             />
-            <button
-              onClick={handleSaveYtKey}
-              disabled={!ytKey.trim() || ytSaving}
-              className="btn-secondary flex-shrink-0"
-            >
-              {ytSaved ? t("setup.saved") : ytSaving ? t("common.loading") : t("setup.save")}
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleTestYtKey}
+                disabled={!ytKey.trim() || ytTesting}
+                className="btn-secondary flex-1"
+              >
+                {ytTesting ? t("setup.testing") : t("setup.testConnection")}
+              </button>
+              <button
+                onClick={handleSaveYtKey}
+                disabled={!ytKey.trim() || ytSaving || (ytTestResult !== null && !ytTestResult.success)}
+                className="btn-primary flex-1"
+              >
+                {ytSaved ? t("setup.saved") : ytSaving ? t("common.loading") : t("setup.save")}
+              </button>
+            </div>
+
+            {/* YouTube test result */}
+            {ytTestResult && (
+              <div
+                className={`rounded-xl p-4 text-sm ${
+                  ytTestResult.success
+                    ? "bg-green-50 text-green-700 dark:bg-green-950/30 dark:text-green-300"
+                    : "bg-red-50 text-red-700 dark:bg-red-950/30 dark:text-red-300"
+                }`}
+              >
+                <p className="font-medium">
+                  {ytTestResult.success ? t("setup.testSuccess") : t("setup.testFailed")}
+                </p>
+                <p className="mt-1 text-xs opacity-80">{ytTestResult.message}</p>
+              </div>
+            )}
           </div>
 
           <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">

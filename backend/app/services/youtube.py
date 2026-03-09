@@ -4,53 +4,80 @@ import re
 logger = logging.getLogger(__name__)
 
 
+async def test_youtube_key(api_key: str) -> dict:
+    """Test a YouTube Data API key by making a simple channel lookup."""
+    try:
+        from pyyoutube import Client
+
+        client = Client(api_key=api_key)
+        # Look up YouTube's own channel as a connectivity test
+        response = client.channels.list(channel_id="UCBR8-60-B28hp2BmDPdntcQ", return_json=True)
+        if response and response.get("items"):
+            title = response["items"][0]["snippet"]["title"]
+            return {"success": True, "message": f"Connection successful. Found channel: {title}"}
+        return {"success": False, "message": "API key works but returned no data."}
+    except Exception as e:
+        return {"success": False, "message": f"YouTube API test failed: {str(e)}"}
+
+
 async def fetch_channel_info(
     channel_url_or_handle: str,
     api_key: str | None = None,
 ) -> dict:
     """
-    Fetch YouTube channel information using the python-youtube library.
+    Fetch YouTube channel information using the pyyoutube library.
 
-    Supports URLs like:
+    Supports:
       - https://www.youtube.com/@handle
       - https://www.youtube.com/channel/UC...
       - @handle
       - UC... (channel ID directly)
-
-    Falls back gracefully if no API key is provided.
     """
     if not api_key:
         raise ValueError(
-            "YouTube API key is required. Set YOUTUBE_API_KEY in your environment."
+            "YouTube API key is required. Add it in Settings page."
         )
+
+    from pyyoutube import Client
+
+    client = Client(api_key=api_key)
 
     channel_id = _extract_channel_id(channel_url_or_handle)
     handle = _extract_handle(channel_url_or_handle)
 
-    from youtube import Api
-
-    api = Api(api_key=api_key)
-
-    # Resolve channel
+    # Try to resolve channel
+    response = None
     if channel_id:
-        channel_response = api.get_channel_info(channel_id=channel_id)
+        response = client.channels.list(
+            channel_id=channel_id,
+            parts=["snippet", "statistics", "contentDetails"],
+            return_json=True,
+        )
     elif handle:
         clean_handle = handle.lstrip("@")
-        channel_response = api.get_channel_info(for_handle=clean_handle)
+        response = client.channels.list(
+            for_handle=clean_handle,
+            parts=["snippet", "statistics", "contentDetails"],
+            return_json=True,
+        )
     else:
-        # Try as a search query
-        channel_response = api.get_channel_info(for_handle=channel_url_or_handle)
+        # Try as handle without @
+        response = client.channels.list(
+            for_handle=channel_url_or_handle.strip(),
+            parts=["snippet", "statistics", "contentDetails"],
+            return_json=True,
+        )
 
-    if not channel_response or not channel_response.items:
+    if not response or not response.get("items"):
         raise ValueError(f"Channel not found: {channel_url_or_handle}")
 
-    channel = channel_response.items[0]
-    snippet = channel.snippet
-    stats = channel.statistics
+    channel = response["items"][0]
+    snippet = channel.get("snippet", {})
+    stats = channel.get("statistics", {})
 
-    subscriber_count = int(stats.subscriberCount) if stats.subscriberCount else 0
-    view_count = int(stats.viewCount) if stats.viewCount else 0
-    video_count = int(stats.videoCount) if stats.videoCount else 0
+    subscriber_count = int(stats.get("subscriberCount", 0))
+    view_count = int(stats.get("viewCount", 0))
+    video_count = int(stats.get("videoCount", 0))
 
     # Estimate avg views per video
     avg_views = view_count // video_count if video_count > 0 else 0
@@ -58,28 +85,30 @@ async def fetch_channel_info(
     # Rough engagement rate estimate (views per subscriber ratio)
     engagement_rate = round(avg_views / subscriber_count * 100, 2) if subscriber_count > 0 else 0.0
 
-    # Try to determine content niche from channel description/category
-    content_niche = _guess_niche(snippet.description or "", snippet.title or "")
+    content_niche = _guess_niche(snippet.get("description", ""), snippet.get("title", ""))
 
-    resolved_handle = ""
-    if hasattr(snippet, "customUrl") and snippet.customUrl:
-        resolved_handle = snippet.customUrl
-    elif handle:
+    resolved_handle = snippet.get("customUrl", "")
+    if not resolved_handle and handle:
         resolved_handle = handle
 
+    thumbnails = snippet.get("thumbnails", {})
+    thumbnail_url = ""
+    if thumbnails.get("high"):
+        thumbnail_url = thumbnails["high"].get("url", "")
+
     return {
-        "channel_id": channel.id,
-        "title": snippet.title or "",
+        "channel_id": channel.get("id", ""),
+        "title": snippet.get("title", ""),
         "handle": resolved_handle,
-        "description": snippet.description or "",
+        "description": snippet.get("description", ""),
         "subscriber_count": subscriber_count,
         "view_count": view_count,
         "video_count": video_count,
         "avg_views": avg_views,
         "engagement_rate": engagement_rate,
         "content_niche": content_niche,
-        "thumbnail_url": snippet.thumbnails.high.url if snippet.thumbnails and snippet.thumbnails.high else "",
-        "country": getattr(snippet, "country", ""),
+        "thumbnail_url": thumbnail_url,
+        "country": snippet.get("country", ""),
     }
 
 

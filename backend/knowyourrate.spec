@@ -11,8 +11,8 @@ block_cipher = None
 litellm_datas = collect_data_files("litellm")
 litellm_hiddenimports = collect_submodules("litellm")
 
-# Collect python-youtube submodules (import name is "youtube")
-youtube_hiddenimports = collect_submodules("youtube")
+# Collect python-youtube submodules (pip: python-youtube, import: pyyoutube)
+youtube_hiddenimports = collect_submodules("pyyoutube")
 
 # Frontend dist directory (built before packaging)
 frontend_dist = os.path.join("..", "frontend", "dist")
@@ -80,7 +80,7 @@ a = Analysis(
         "app.services.tiktok",
         "app.utils",
         "app.utils.prompts",
-        "youtube",
+        "pyyoutube",
     ] + litellm_hiddenimports + youtube_hiddenimports,
     hookspath=[],
     hooksconfig={},
