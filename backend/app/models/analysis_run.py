@@ -1,8 +1,7 @@
 import uuid
 from datetime import datetime, timezone
 
-from sqlalchemy import DateTime, ForeignKey, String, Text, func
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON, ForeignKey, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -29,22 +28,16 @@ class AnalysisRun(Base):
         String(50), nullable=False, default="pending"
     )
     current_agent: Mapped[str | None] = mapped_column(String(100), nullable=True)
-    market_data: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    creator_analysis: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    brand_analysis: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    debate_result: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
-    final_report: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    market_data: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    creator_analysis: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    brand_analysis: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    debate_result: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    final_report: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
     started_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
         default=lambda: datetime.now(timezone.utc),
     )
-    completed_at: Mapped[datetime | None] = mapped_column(
-        DateTime(timezone=True), nullable=True
-    )
+    completed_at: Mapped[datetime | None] = mapped_column(nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
         default=lambda: datetime.now(timezone.utc),
     )

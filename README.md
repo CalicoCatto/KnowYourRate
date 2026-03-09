@@ -56,12 +56,20 @@ Choose your preferred LLM provider — bring your own API key:
 
 ## Quick Start
 
-### Prerequisites
+Three ways to run KnowYourRate:
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
-- An API key from any supported LLM provider
+### Option 1: Windows EXE (Easiest)
 
-### Deploy
+No installation needed. Download and double-click.
+
+1. Go to [Releases](https://github.com/CalicoCatto/KnowYourRate/releases)
+2. Download `KnowYourRate-windows-x64.zip`
+3. Unzip and run `KnowYourRate.exe`
+4. The browser opens automatically at `http://localhost:8000`
+
+Data is stored in a SQLite database (`knowyourrate.db`) in the same folder as the EXE.
+
+### Option 2: Docker Compose
 
 ```bash
 git clone https://github.com/CalicoCatto/KnowYourRate.git
@@ -73,17 +81,7 @@ docker compose up -d
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### Generate an Encryption Secret
-
-The app encrypts stored API keys at rest. Generate a secret:
-
-```bash
-python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-```
-
-Paste the output into your `.env` file as `ENCRYPTION_SECRET`.
-
-### Local Development (without Docker)
+### Option 3: Local Development
 
 **Backend:**
 
@@ -93,12 +91,13 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# Start PostgreSQL (use Docker or a local instance)
-docker compose up db -d
+# Option A: Use SQLite (zero setup)
+DATABASE_URL="sqlite+aiosqlite:///knowyourrate.db" \
+uvicorn app.main:app --reload --port 8000
 
-# Run the backend
+# Option B: Use PostgreSQL
+docker compose up db -d
 DATABASE_URL="postgresql+asyncpg://kyr:changeme@localhost:5432/knowyourrate" \
-ENCRYPTION_SECRET="your-secret-here" \
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -111,6 +110,16 @@ npm run dev
 ```
 
 Frontend runs at [http://localhost:5173](http://localhost:5173), API proxied to port 8000.
+
+### Generate an Encryption Secret (Optional)
+
+The app encrypts stored API keys at rest. Generate a secret for production:
+
+```bash
+python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+Paste the output into your `.env` file as `ENCRYPTION_SECRET`.
 
 ## Architecture
 

@@ -1,4 +1,22 @@
+import os
+import sys
+
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+def _is_frozen() -> bool:
+    """Check if we are running inside a PyInstaller bundle."""
+    return getattr(sys, "frozen", False)
+
+
+def _default_database_url() -> str:
+    """Return the default DATABASE_URL based on runtime mode."""
+    if _is_frozen():
+        # EXE mode: use SQLite in the same directory as the executable
+        exe_dir = os.path.dirname(sys.executable)
+        db_path = os.path.join(exe_dir, "knowyourrate.db")
+        return f"sqlite+aiosqlite:///{db_path}"
+    return "postgresql+asyncpg://postgres:postgres@localhost:5432/knowyourrate"
 
 
 class Settings(BaseSettings):
@@ -10,9 +28,17 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    DATABASE_URL: str = "postgresql+asyncpg://postgres:postgres@localhost:5432/knowyourrate"
+    DATABASE_URL: str = _default_database_url()
     ENCRYPTION_SECRET: str = "change-me-in-production-must-be-32-bytes!"
     YOUTUBE_API_KEY: str | None = None
+
+    @property
+    def is_sqlite(self) -> bool:
+        return self.DATABASE_URL.startswith("sqlite")
+
+    @property
+    def is_frozen(self) -> bool:
+        return _is_frozen()
 
 
 _settings: Settings | None = None

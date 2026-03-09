@@ -2,8 +2,7 @@ import uuid
 from datetime import datetime, timezone
 from decimal import Decimal
 
-from sqlalchemy import DateTime, ForeignKey, Numeric, String, Text, func
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy import JSON, ForeignKey, Numeric, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -30,9 +29,7 @@ class Report(Base):
     price_mid: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     price_high: Mapped[Decimal | None] = mapped_column(Numeric(12, 2), nullable=True)
     currency: Mapped[str] = mapped_column(String(10), nullable=False, default="USD")
-    full_report: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
+    full_report: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True),
-        server_default=func.now(),
         default=lambda: datetime.now(timezone.utc),
     )

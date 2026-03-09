@@ -56,12 +56,20 @@ KnowYourRate 帮助 YouTube 和 TikTok 创作者确定品牌合作的公平报�
 
 ## 快速开始
 
-### 前置要求
+提供三种运行方式：
 
-- [Docker](https://docs.docker.com/get-docker/) 和 Docker Compose
-- 任一支持的大模型提供商的 API Key
+### 方式一：Windows EXE（最简单）
 
-### 部署
+无需安装任何环境，下载即用。
+
+1. 前往 [Releases](https://github.com/CalicoCatto/KnowYourRate/releases) 页面
+2. 下载 `KnowYourRate-windows-x64.zip`
+3. 解压后双击运行 `KnowYourRate.exe`
+4. 浏览器自动打开 `http://localhost:8000`
+
+数据存储在 EXE 同目录下的 SQLite 数据库文件（`knowyourrate.db`）中。
+
+### 方式二：Docker Compose
 
 ```bash
 git clone https://github.com/CalicoCatto/KnowYourRate.git
@@ -73,17 +81,7 @@ docker compose up -d
 
 浏览器打开 [http://localhost:3000](http://localhost:3000) 即可使用。
 
-### 生成加密密钥
-
-应用会对存储的 API Key 进行加密。生成密钥：
-
-```bash
-python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-```
-
-将输出粘贴到 `.env` 文件的 `ENCRYPTION_SECRET` 字段。
-
-### 本地开发（不使用 Docker）
+### 方式三：本地开发
 
 **后端：**
 
@@ -93,12 +91,13 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -e ".[dev]"
 
-# 启动 PostgreSQL（使用 Docker 或本地实例）
-docker compose up db -d
+# 方案 A：使用 SQLite（零配置）
+DATABASE_URL="sqlite+aiosqlite:///knowyourrate.db" \
+uvicorn app.main:app --reload --port 8000
 
-# 启动后端
+# 方案 B：使用 PostgreSQL
+docker compose up db -d
 DATABASE_URL="postgresql+asyncpg://kyr:changeme@localhost:5432/knowyourrate" \
-ENCRYPTION_SECRET="your-secret-here" \
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -111,6 +110,16 @@ npm run dev
 ```
 
 前端运行在 [http://localhost:5173](http://localhost:5173)，API 自动代理到 8000 端口。
+
+### 生成加密密钥（可选）
+
+应用会对存储的 API Key 进行加密。生产环境建议生成专用密钥：
+
+```bash
+python3 -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+```
+
+将输出粘贴到 `.env` 文件的 `ENCRYPTION_SECRET` 字段。
 
 ## 架构
 
