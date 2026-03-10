@@ -13,6 +13,7 @@ import logging
 import re
 import time
 import urllib.parse
+import uuid
 from functools import reduce
 
 import httpx
@@ -70,8 +71,13 @@ def _get_mixin_key(img_key: str, sub_key: str) -> str:
 def _sign_wbi(params: dict, mixin_key: str) -> dict:
     """Add WBI signature (wts + w_rid) to API params."""
     params["wts"] = int(time.time())
+    # Filter special characters from values (required by B站 WBI spec)
+    filtered = {
+        k: "".join(ch for ch in str(v) if ch not in "!'()*")
+        for k, v in params.items()
+    }
     # Sort and encode
-    query = urllib.parse.urlencode(sorted(params.items()))
+    query = urllib.parse.urlencode(sorted(filtered.items()))
     md5 = hashlib.md5((query + mixin_key).encode()).hexdigest()
     params["w_rid"] = md5
     return params
@@ -131,7 +137,13 @@ async def fetch_bilibili_info(uid_or_url: str) -> dict:
             f"无法识别B站UID。请输入UID数字或空间链接，例如: 12345 或 https://space.bilibili.com/12345"
         )
 
-    async with httpx.AsyncClient(timeout=15.0) as client:
+    # Generate browser-like cookies required by B站 anti-crawling
+    cookies = {
+        "buvid3": str(uuid.uuid4()) + "infoc",
+        "b_nut": str(int(time.time())),
+    }
+
+    async with httpx.AsyncClient(timeout=15.0, cookies=cookies) as client:
         # 1. Get WBI signing keys
         img_key, sub_key = await _get_wbi_keys(client)
         mixin_key = _get_mixin_key(img_key, sub_key) if img_key and sub_key else ""
@@ -187,9 +199,15 @@ async def fetch_bilibili_info(uid_or_url: str) -> dict:
         video_data = video_resp.json()
 
         videos = []
-        if video_data.get("code") == 0:
+        video_api_code = video_data.get("code")
+        if video_api_code == 0:
             vlist = video_data.get("data", {}).get("list", {}).get("vlist", [])
             videos = vlist
+        else:
+            logger.warning(
+                "B站视频列表获取失败 (UID: %s): code=%s, message=%s",
+                uid, video_api_code, video_data.get("message", ""),
+            )
 
         # 5. Calculate metrics from videos
         total_views = 0
