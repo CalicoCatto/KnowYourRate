@@ -97,7 +97,7 @@ export default function ReportPage() {
             {report.title ?? t("report.title")}
           </h1>
           {result?.completed_at && (
-            <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
               {new Date(result.completed_at).toLocaleDateString()}
             </p>
           )}
@@ -149,19 +149,19 @@ export default function ReportPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="pb-3 text-left font-medium text-gray-500 dark:text-gray-400">{t("report.contentType")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.low")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.mid")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.high")}</th>
+                    <th className="pb-3 text-left font-medium text-gray-600 dark:text-gray-300">{t("report.contentType")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.low")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.mid")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.high")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {contentTypePricing.map((ct, idx) => (
                     <tr key={idx}>
                       <td className="py-3 font-medium text-gray-900 dark:text-white">{ct.label}</td>
-                      <td className="py-3 text-right text-gray-600 dark:text-gray-400">{fmtCurrency(ct.price_range.low, ct.price_range.currency)}</td>
+                      <td className="py-3 text-right text-gray-600 dark:text-gray-300">{fmtCurrency(ct.price_range.low, ct.price_range.currency)}</td>
                       <td className="py-3 text-right font-semibold text-primary-600 dark:text-primary-400">{fmtCurrency(ct.price_range.mid, ct.price_range.currency)}</td>
-                      <td className="py-3 text-right text-gray-600 dark:text-gray-400">{fmtCurrency(ct.price_range.high, ct.price_range.currency)}</td>
+                      <td className="py-3 text-right text-gray-600 dark:text-gray-300">{fmtCurrency(ct.price_range.high, ct.price_range.currency)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -192,7 +192,7 @@ export default function ReportPage() {
                       {fmtCurrency(tier.price, currency)}
                     </p>
                     {tier.duration && (
-                      <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">{tier.duration}</p>
+                      <p className="mt-1 text-xs text-gray-600 dark:text-gray-300">{tier.duration}</p>
                     )}
                     <ul className="mt-3 space-y-1">
                       {tier.includes.map((item, i) => (
@@ -260,7 +260,7 @@ export default function ReportPage() {
                   (report as Record<string, unknown>).tax_estimate as Record<string, unknown>,
                 ).map(([key, val]) => (
                   <div key={key} className="flex justify-between border-b border-gray-100 dark:border-gray-800 pb-1">
-                    <span className="text-gray-500 dark:text-gray-400">{key}</span>
+                    <span className="text-gray-600 dark:text-gray-300">{key}</span>
                     <span className="font-medium">
                       {typeof val === "number" ? fmtCurrency(val, currency) : String(val)}
                     </span>

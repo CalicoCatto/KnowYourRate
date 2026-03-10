@@ -40,7 +40,7 @@ export default function HistoryPage() {
       {reports.length === 0 ? (
         <div className="card py-16 text-center">
           <svg
-            className="mx-auto h-12 w-12 text-gray-300 dark:text-gray-600"
+            className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
             fill="none"
             viewBox="0 0 24 24"
             strokeWidth={1}
@@ -52,7 +52,7 @@ export default function HistoryPage() {
               d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"
             />
           </svg>
-          <p className="mt-4 text-gray-500 dark:text-gray-400">{t("history.empty")}</p>
+          <p className="mt-4 text-gray-600 dark:text-gray-300">{t("history.empty")}</p>
           <button
             onClick={() => navigate("/creator")}
             className="btn-primary mt-6"
@@ -80,10 +80,10 @@ export default function HistoryPage() {
                 <h3 className="font-semibold text-gray-900 dark:text-white truncate">
                   {report.title}
                 </h3>
-                <p className="mt-0.5 text-sm text-gray-500 dark:text-gray-400 line-clamp-1">
+                <p className="mt-0.5 text-sm text-gray-600 dark:text-gray-300 line-clamp-1">
                   {report.summary}
                 </p>
-                <p className="mt-1 text-xs text-gray-400 dark:text-gray-500">
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
                   {new Date(report.created_at).toLocaleDateString(undefined, {
                     year: "numeric",
                     month: "short",
@@ -100,7 +100,7 @@ export default function HistoryPage() {
                   <p className="text-lg font-bold text-primary-600 dark:text-primary-400">
                     {fmtCurrency(Number(report.price_mid), report.currency)}
                   </p>
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
                     {fmtCurrency(Number(report.price_low ?? 0), report.currency)} - {fmtCurrency(Number(report.price_high ?? 0), report.currency)}
                   </p>
                 </div>
@@ -112,7 +112,7 @@ export default function HistoryPage() {
                   e.stopPropagation();
                   handleDelete(report.id);
                 }}
-                className="flex-shrink-0 rounded-lg p-2 text-gray-400 opacity-0 transition-all hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 dark:hover:bg-red-950 dark:hover:text-red-400"
+                className="flex-shrink-0 rounded-lg p-2 text-gray-500 opacity-0 transition-all hover:bg-red-50 hover:text-red-600 group-hover:opacity-100 dark:text-gray-400 dark:hover:bg-red-950 dark:hover:text-red-400"
                 title={t("common.delete")}
               >
                 <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">

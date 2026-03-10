@@ -198,7 +198,7 @@ export default function CreatorPage() {
                   <p className="text-xl font-bold text-gray-900 dark:text-white">
                     {store.profile.display_name}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-gray-600 dark:text-gray-300">
                     @{store.profile.handle}
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export default function CreatorPage() {
                 <h4 className="font-semibold text-gray-900 dark:text-white">
                   {t("creator.manualEntry")}
                 </h4>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                   {isCNManualPlatform
                     ? t("creator.manualCNSubtitle")
                     : t("creator.manualYoutubeSubtitle")}
@@ -326,7 +326,7 @@ export default function CreatorPage() {
             {/* CN-specific platform fields */}
             {isCN && store.platform === "bilibili" && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <h5 className="col-span-full text-sm font-medium text-gray-600 dark:text-gray-400">
+                <h5 className="col-span-full text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t("creator.bilibiliFields")}
                 </h5>
                 <div>
@@ -356,7 +356,7 @@ export default function CreatorPage() {
 
             {isCN && store.platform === "douyin" && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <h5 className="col-span-full text-sm font-medium text-gray-600 dark:text-gray-400">
+                <h5 className="col-span-full text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t("creator.douyinFields")}
                 </h5>
                 <div>
@@ -386,7 +386,7 @@ export default function CreatorPage() {
 
             {isCN && store.platform === "kuaishou" && (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 border-t border-gray-200 dark:border-gray-700 pt-4">
-                <h5 className="col-span-full text-sm font-medium text-gray-600 dark:text-gray-400">
+                <h5 className="col-span-full text-sm font-medium text-gray-700 dark:text-gray-300">
                   {t("creator.kuaishouFields")}
                 </h5>
                 <div>
@@ -514,7 +514,7 @@ export default function CreatorPage() {
                 <span className="text-sm font-medium text-gray-900 dark:text-white">
                   {t("creator.isFirstBrandDeal")}
                 </span>
-                <p className="text-xs text-gray-500 dark:text-gray-400">
+                <p className="text-xs text-gray-500 dark:text-gray-300">
                   {t("creator.isFirstBrandDealDesc")}
                 </p>
               </div>
@@ -534,7 +534,7 @@ export default function CreatorPage() {
                     <span className="text-sm font-medium text-gray-900 dark:text-white">
                       {t("creator.hasLivestream")}
                     </span>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                    <p className="text-xs text-gray-500 dark:text-gray-300">
                       {t("creator.hasLivestreamDesc")}
                     </p>
                   </div>

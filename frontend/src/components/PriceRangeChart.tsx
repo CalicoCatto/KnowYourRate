@@ -63,7 +63,7 @@ export default function PriceRangeChart({
         {/* Big number display */}
         <div className="mb-8 grid grid-cols-3 gap-4 text-center">
           <div className="rounded-xl bg-gray-50 p-4 dark:bg-gray-800">
-            <p className="text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">
+            <p className="text-xs font-medium uppercase tracking-wider text-gray-600 dark:text-gray-300">
               {t("report.low")}
             </p>
             <p className="mt-1 text-2xl font-bold text-gray-700 dark:text-gray-200">

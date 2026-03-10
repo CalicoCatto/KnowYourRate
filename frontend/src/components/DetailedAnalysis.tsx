@@ -23,18 +23,19 @@ function Section({ title, step, icon, children, defaultOpen = false, skipped = f
     return (
       <div className="card overflow-hidden opacity-50">
         <div className="flex items-center gap-4">
-          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+          <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400">
             {icon}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-800 dark:text-gray-500">
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                 Step {step}
               </span>
-              <h3 className="font-semibold text-gray-400 line-through dark:text-gray-500">{title}</h3>
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-400 dark:bg-gray-800">
+              <h3 className="font-semibold text-gray-500 line-through dark:text-gray-400">{title}</h3>
+              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
                 Skipped (Fast Track)
               </span>
+
             </div>
           </div>
         </div>
@@ -54,14 +55,14 @@ function Section({ title, step, icon, children, defaultOpen = false, skipped = f
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 dark:bg-gray-800 dark:text-gray-300">
               Step {step}
             </span>
             <h3 className="font-semibold text-gray-900 dark:text-white">{title}</h3>
           </div>
         </div>
         <svg
-          className={`h-5 w-5 flex-shrink-0 text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
+          className={`h-5 w-5 flex-shrink-0 text-gray-500 dark:text-gray-400 transition-transform ${open ? "rotate-180" : ""}`}
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
@@ -77,7 +78,7 @@ function Section({ title, step, icon, children, defaultOpen = false, skipped = f
 
 function RenderData({ data }: { data: unknown }) {
   if (data == null) {
-    return <p className="text-sm italic text-gray-400">No data available</p>;
+    return <p className="text-sm italic text-gray-500 dark:text-gray-400">No data available</p>;
   }
 
   if (typeof data === "string") {
@@ -132,7 +133,7 @@ function RenderData({ data }: { data: unknown }) {
     );
   }
 
-  return <pre className="overflow-x-auto text-xs text-gray-600 dark:text-gray-400">{JSON.stringify(data, null, 2)}</pre>;
+  return <pre className="overflow-x-auto text-xs text-gray-600 dark:text-gray-300">{JSON.stringify(data, null, 2)}</pre>;
 }
 
 function formatKey(key: string): string {
@@ -159,7 +160,7 @@ export default function DetailedAnalysis({ agentOutputs, finalReport }: Props) {
             <h2 className="text-lg font-bold text-gray-900 dark:text-white">
               {t("report.detailedTitle")}
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               {t("report.detailedSubtitle")}
             </p>
           </div>

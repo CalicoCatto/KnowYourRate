@@ -69,7 +69,7 @@ export default function SavedReportPage() {
         <div>
           <button
             onClick={() => navigate("/history")}
-            className="mb-2 flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+            className="mb-2 flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-gray-100"
           >
             <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
@@ -77,7 +77,7 @@ export default function SavedReportPage() {
             {t("history.title")}
           </button>
           <h1 className="section-title">{report.title}</h1>
-          <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+          <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
             {new Date(report.created_at).toLocaleDateString(undefined, {
               year: "numeric",
               month: "long",
@@ -134,19 +134,19 @@ export default function SavedReportPage() {
               <table className="w-full text-sm">
                 <thead>
                   <tr className="border-b border-gray-200 dark:border-gray-700">
-                    <th className="pb-3 text-left font-medium text-gray-500 dark:text-gray-400">{t("report.contentType")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.low")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.mid")}</th>
-                    <th className="pb-3 text-right font-medium text-gray-500 dark:text-gray-400">{t("report.high")}</th>
+                    <th className="pb-3 text-left font-medium text-gray-600 dark:text-gray-300">{t("report.contentType")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.low")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.mid")}</th>
+                    <th className="pb-3 text-right font-medium text-gray-600 dark:text-gray-300">{t("report.high")}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100 dark:divide-gray-800">
                   {contentTypePricing.map((ct, idx) => (
                     <tr key={idx}>
                       <td className="py-3 font-medium text-gray-900 dark:text-white">{ct.label}</td>
-                      <td className="py-3 text-right text-gray-600 dark:text-gray-400">{fmtCurrency(ct.price_range.low, ct.price_range.currency)}</td>
+                      <td className="py-3 text-right text-gray-600 dark:text-gray-300">{fmtCurrency(ct.price_range.low, ct.price_range.currency)}</td>
                       <td className="py-3 text-right font-semibold text-primary-600 dark:text-primary-400">{fmtCurrency(ct.price_range.mid, ct.price_range.currency)}</td>
-                      <td className="py-3 text-right text-gray-600 dark:text-gray-400">{fmtCurrency(ct.price_range.high, ct.price_range.currency)}</td>
+                      <td className="py-3 text-right text-gray-600 dark:text-gray-300">{fmtCurrency(ct.price_range.high, ct.price_range.currency)}</td>
                     </tr>
                   ))}
                 </tbody>

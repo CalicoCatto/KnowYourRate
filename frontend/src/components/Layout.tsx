@@ -21,7 +21,7 @@ export default function Layout({ children }: { children: ReactNode }) {
   }, [darkMode]);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-gray-50 text-gray-900 dark:bg-gray-950 dark:text-gray-100">
       {/* ---- Header ---- */}
       <header className="sticky top-0 z-50 border-b border-gray-200 bg-white/80 backdrop-blur-lg dark:border-gray-800 dark:bg-gray-950/80">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
@@ -47,7 +47,7 @@ export default function Layout({ children }: { children: ReactNode }) {
                   className={`rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
                     isActive
                       ? "bg-primary-50 text-primary-700 dark:bg-primary-950 dark:text-primary-300"
-                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100"
+                      : "text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-gray-100"
                   }`}
                 >
                   {t(label)}
@@ -86,9 +86,9 @@ export default function Layout({ children }: { children: ReactNode }) {
       </main>
 
       {/* ---- Footer ---- */}
-      <footer className="border-t border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-950">
+      <footer className="border-t border-gray-200 bg-white/80 dark:border-gray-800 dark:bg-gray-900/80">
         <div className="mx-auto max-w-6xl px-4 py-6 sm:px-6">
-          <p className="text-center text-xs text-gray-400 dark:text-gray-600">
+          <p className="text-center text-xs text-gray-500 dark:text-gray-400">
             {t("app.footer")}
           </p>
         </div>

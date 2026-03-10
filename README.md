@@ -50,9 +50,9 @@ full_pipeline (complex deals, ~60s):
 | Agent | Role | LLM Usage |
 |-------|------|-----------|
 | **A — Creator Profile** | Computes base price from CPM tables, applies modifier categories, asks LLM for qualitative adjustment (clamped ±30%) | Qualitative assessment only |
-| **B — Market Intel** | Applies deal condition multipliers (deliverable type, usage rights, exclusivity), looks up known brand patterns, asks LLM for market context | Brand intelligence, comparable deals |
-| **C — Debate** | 3-round adversarial debate: Bull (creator agent, temp 0.7) vs Bear (brand manager, temp 0.3), cross-rebuttal round, then Judge (temp 0.4) synthesizes | Full debate reasoning |
-| **D — Report** | Generates narrative report using exact computed prices, package tiers, negotiation scripts, and contract red flags | Report writing |
+| **B — Market Intel** | Applies deal condition multipliers (deliverable type, usage rights, exclusivity), looks up known brand patterns, generates 3-tier packages, detects contract red flags, asks LLM for market context | Brand intelligence, comparable deals |
+| **C — Debate** | 3-round adversarial debate: Bull (creator agent, temp 0.7) vs Bear (brand manager, temp 0.3), cross-rebuttal round (parallel), then Judge (temp 0.4) synthesizes final range (walk_away / fair_market / anchor_price) | Full debate reasoning |
+| **D — Report** | Generates narrative report using exact computed prices, package tiers, negotiation scripts for 3 scenarios, and contract red flags | Report writing |
 
 **Output includes:**
 - Price range (walk-away / fair market / anchor) with reasoning
@@ -61,7 +61,7 @@ full_pipeline (complex deals, ~60s):
 - Negotiation talking points and scripts for 3 scenarios
 - Contract red flags and clause warnings
 - Market context and comparable benchmarks
-- **CN-only**: Tax estimation (劳务报酬 / 个体工商户 / 公司), platform official pricing reference, ad law compliance
+- **CN-only**: Tax estimation (劳务报酬 / 个体工商户 / 公司), platform official pricing reference (花火/星图/磁力聚星 fees), livestream commerce pricing (坑位费 + 佣金), MCN commission reference, ad law compliance
 
 ## Supported Platforms
 
@@ -168,6 +168,9 @@ Paste the output into your `.env` file as `ENCRYPTION_SECRET`.
 KnowYourRate/
 ├── backend/                  # Python / FastAPI
 │   ├── app/
+│   │   ├── main.py              # App factory, CORS, static serving, SPA catch-all
+│   │   ├── config.py             # Settings (DATABASE_URL, ENCRYPTION_SECRET)
+│   │   ├── database.py           # SQLAlchemy async engine + session factory
 │   │   ├── edition.py            # Edition detection (EDITION env var)
 │   │   ├── agents/               # 4 AI agents + orchestrator
 │   │   │   ├── creator_profile.py     # Agent A (international)
@@ -179,8 +182,8 @@ KnowYourRate/
 │   │   │   ├── report_cn.py           # Agent D (CN: tax, compliance)
 │   │   │   └── orchestrator.py        # Pipeline routing (edition-aware)
 │   │   ├── api/routes/           # REST API endpoints
-│   │   ├── llm/                  # LiteLLM provider abstraction
-│   │   ├── models/               # SQLAlchemy ORM models
+│   │   ├── llm/                  # LiteLLM provider abstraction (6 providers)
+│   │   ├── models/               # SQLAlchemy ORM (settings, creator, analysis_run, report)
 │   │   ├── schemas/              # Pydantic request/response schemas
 │   │   ├── services/             # YouTube, TikTok, Bilibili, Douyin, Kuaishou, encryption
 │   │   └── utils/
@@ -194,11 +197,11 @@ KnowYourRate/
 │   └── knowyourrate_cn.spec      # CN PyInstaller config
 ├── frontend/                 # React / TypeScript / Vite / Tailwind
 │   └── src/
-│       ├── pages/                # Setup → Creator → Analysis → Report
-│       ├── components/           # PlatformSelector, PriceRangeChart, etc.
-│       ├── api/                  # API client + SSE helpers
-│       ├── store/                # Zustand state management
-│       └── types/index.ts        # Types + edition detection (VITE_EDITION)
+│       ├── pages/                # Setup → Creator → Analysis → Report → History
+│       ├── components/           # PlatformSelector, PriceRangeChart, AgentProgress, etc.
+│       ├── api/                  # Axios API client + SSE subscription
+│       ├── store/                # Zustand state management (3 stores)
+│       └── types/index.ts        # Types + edition detection (VITE_EDITION) + label maps
 ├── .github/workflows/
 │   └── build-exe.yml             # Parallel international + CN EXE builds
 └── docker-compose.yml            # One-click deployment
@@ -209,9 +212,10 @@ KnowYourRate/
 | Layer | Technology |
 |-------|-----------|
 | Backend | Python 3.11+, FastAPI, SQLAlchemy (async), LiteLLM |
-| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4, Zustand |
+| Frontend | React 18, TypeScript, Vite, Tailwind CSS v4, Zustand, Recharts |
 | Database | PostgreSQL 16 or SQLite (auto-detected) |
 | LLM | LiteLLM (unified interface for 6 providers) |
+| i18n | i18next (English + Chinese) |
 | Deployment | Docker Compose, Windows EXE (x2), or local dev |
 
 ### Edition System
@@ -241,7 +245,7 @@ Both editions share a single codebase. The edition is selected via environment v
 1. **Setup** — Select an LLM provider and enter your API key. Test the connection.
 2. **Creator** — Choose your platform, enter your channel URL or stats manually. Add the brand name, deal type, usage rights, and exclusivity terms. CN users also enter platform-specific metrics (投币率, 完播率, 回访率) and city tier.
 3. **Analysis** — Watch the 4-agent pipeline run in real-time with live SSE progress updates. Fast-track queries skip Agents B and C.
-4. **Report** — Review your pricing intelligence report with price ranges, negotiation scripts, package tiers, and contract red flags. CN reports also include tax estimation and platform official pricing reference.
+4. **Report** — Review your pricing intelligence report with price ranges, negotiation scripts, package tiers, and contract red flags. CN reports also include tax estimation and platform official pricing reference. Reports are auto-saved for later review.
 
 ## Internationalization
 

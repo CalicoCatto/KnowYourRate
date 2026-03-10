@@ -67,7 +67,7 @@ export default function AnalysisPage() {
       {/* Progress bar */}
       {!done && (
         <div className="mb-8">
-          <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-300">
             <span>{Math.round(progress * 100)}%</span>
             <span>{t("analysis.estimatedTime")}: ~{Math.max(1, Math.round((1 - progress) * 3))} min</span>
           </div>

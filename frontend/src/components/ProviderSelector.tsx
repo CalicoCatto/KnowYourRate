@@ -55,7 +55,7 @@ export default function ProviderSelector({
                 <p className="font-semibold text-gray-900 dark:text-white">
                   {p.display_name}
                 </p>
-                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400">
+                <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-300">
                   {p.models.length} models available
                 </p>
               </div>

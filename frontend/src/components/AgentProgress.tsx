@@ -39,8 +39,8 @@ export default function AgentProgress({ steps }: Props) {
                         : step.status === "failed"
                           ? "text-red-600 dark:text-red-400"
                           : step.status === "skipped"
-                            ? "text-gray-400 line-through dark:text-gray-500"
-                            : "text-gray-500 dark:text-gray-400"
+                            ? "text-gray-500 line-through dark:text-gray-400"
+                            : "text-gray-600 dark:text-gray-300"
                   }`}
                 >
                   {t(`analysis.agents.${step.agent}`)}
@@ -53,13 +53,13 @@ export default function AgentProgress({ steps }: Props) {
                         ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
                         : step.status === "failed"
                           ? "bg-red-100 text-red-700 dark:bg-red-900 dark:text-red-300"
-                          : "bg-gray-100 text-gray-500 dark:bg-gray-800 dark:text-gray-400"
+                          : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-300"
                   }`}
                 >
                   {t(`analysis.status.${step.status}`)}
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                 {step.description}
               </p>
             </div>
@@ -110,7 +110,7 @@ function StatusIndicator({ status }: { status: string }) {
   if (status === "skipped") {
     return (
       <div className="flex h-8 w-8 items-center justify-center rounded-full border-2 border-dashed border-gray-300 bg-gray-50 dark:border-gray-600 dark:bg-gray-800">
-        <svg className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
+        <svg className="h-4 w-4 text-gray-500 dark:text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" d="M13 5l7 7-7 7M5 5l7 7-7 7" />
         </svg>
       </div>

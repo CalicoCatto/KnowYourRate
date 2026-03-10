@@ -48,13 +48,13 @@ function PointItem({ point }: { point: NegotiationPoint }) {
         <p className="font-medium text-gray-900 dark:text-white">
           {point.title}
         </p>
-        <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+        <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
           {point.description}
         </p>
       </div>
       <button
         onClick={copy}
-        className="flex-shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-gray-400 opacity-0 transition-all hover:bg-gray-200 hover:text-gray-700 group-hover:opacity-100 dark:hover:bg-gray-700 dark:hover:text-gray-200"
+        className="flex-shrink-0 rounded-lg px-2 py-1 text-xs font-medium text-gray-500 opacity-0 transition-all hover:bg-gray-200 hover:text-gray-700 group-hover:opacity-100 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200"
       >
         {copied ? t("report.copied") : t("report.copyPoint")}
       </button>

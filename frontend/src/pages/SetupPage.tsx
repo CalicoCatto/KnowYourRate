@@ -309,7 +309,7 @@ export default function SetupPage() {
               <h3 className="font-semibold text-gray-900 dark:text-white">
                 {t("setup.youtubeApiKey")}
               </h3>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                 {t("setup.youtubeApiKeyDesc")}
               </p>
             </div>
@@ -384,7 +384,7 @@ export default function SetupPage() {
             )}
           </div>
 
-          <p className="mt-3 text-xs text-gray-400 dark:text-gray-500">
+          <p className="mt-3 text-xs text-gray-500 dark:text-gray-400">
             {t("setup.youtubeApiKeyHelp")}{" "}
             <a
               href="https://console.cloud.google.com/apis/credentials"

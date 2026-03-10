@@ -68,7 +68,7 @@ export default function ContractRedFlags({ flags }: Props) {
                     {t(`report.severity.${flag.severity}`)}
                   </span>
                 </div>
-                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
                   {flag.description}
                 </p>
               </div>
