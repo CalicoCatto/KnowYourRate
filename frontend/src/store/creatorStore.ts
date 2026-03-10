@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import type { Platform, CreatorProfile, DealType, UsageRights, Exclusivity, CityTier } from "@/types";
 
-const CN_MANUAL_PLATFORMS = ["tiktok", "bilibili", "douyin", "kuaishou"];
+const CN_MANUAL_PLATFORMS = ["tiktok", "douyin", "kuaishou"];
 
 interface CreatorState {
   platform: Platform | null;

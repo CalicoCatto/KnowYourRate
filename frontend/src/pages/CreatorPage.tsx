@@ -21,7 +21,7 @@ import {
   CITY_TIER_LABELS,
 } from "@/types";
 
-const CN_MANUAL_PLATFORMS = ["tiktok", "bilibili", "douyin", "kuaishou"];
+const CN_MANUAL_PLATFORMS = ["tiktok", "douyin", "kuaishou"];
 
 export default function CreatorPage() {
   const { t } = useTranslation();
@@ -39,14 +39,14 @@ export default function CreatorPage() {
     store.resetPlatform(p);
   };
 
-  /* Fetch YouTube profile */
+  /* Fetch profile (YouTube or Bilibili) */
   const handleFetch = async () => {
-    if (!store.channelUrl.trim()) return;
+    if (!store.channelUrl.trim() || !store.platform) return;
     setFetching(true);
     store.setFetchError(null);
     store.setProfile(null);
     try {
-      const result = await lookupCreator("youtube", store.channelUrl.trim());
+      const result = await lookupCreator(store.platform, store.channelUrl.trim());
       store.setProfile(result);
       store.setUseManual(false);
     } catch (err: unknown) {
@@ -129,9 +129,10 @@ export default function CreatorPage() {
 
   const manualValid = store.manualHandle.trim() && store.manualFollowers.trim();
   const isCNManualPlatform = CN_MANUAL_PLATFORMS.includes(store.platform ?? "");
+  const isLookupPlatform = store.platform === "youtube" || store.platform === "bilibili";
   const canStart =
     store.brandName.trim() &&
-    ((store.platform === "youtube" && (store.profile || (store.useManual && manualValid))) ||
+    ((isLookupPlatform && (store.profile || (store.useManual && manualValid))) ||
       (isCNManualPlatform && manualValid));
 
   /* Edition-aware label maps */
@@ -153,15 +154,21 @@ export default function CreatorPage() {
         {/* Platform selector */}
         <PlatformSelector selected={store.platform} onSelect={handlePlatformSelect} />
 
-        {/* YouTube: URL lookup + manual fallback */}
-        {store.platform === "youtube" && !store.useManual && (
+        {/* URL lookup (YouTube / Bilibili) + manual fallback */}
+        {(store.platform === "youtube" || store.platform === "bilibili") && !store.useManual && (
           <div className="animate-fade-in space-y-5">
             <div>
-              <label className="label">{t("creator.channelUrl")}</label>
+              <label className="label">
+                {store.platform === "bilibili" ? t("creator.bilibiliUrl") : t("creator.channelUrl")}
+              </label>
               <div className="flex gap-3">
                 <input
                   className="input flex-1"
-                  placeholder={t("creator.channelUrlPlaceholder")}
+                  placeholder={
+                    store.platform === "bilibili"
+                      ? t("creator.bilibiliUrlPlaceholder")
+                      : t("creator.channelUrlPlaceholder")
+                  }
                   value={store.channelUrl}
                   onChange={(e) => store.setChannelUrl(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleFetch()}
@@ -199,7 +206,7 @@ export default function CreatorPage() {
                     {store.profile.display_name}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-300">
-                    @{store.profile.handle}
+                    {store.platform === "bilibili" ? `UID: ${store.profile.platform_id}` : `@${store.profile.handle}`}
                   </p>
                 </div>
                 <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -221,9 +228,34 @@ export default function CreatorPage() {
                   />
                   <Stat
                     label={t("creator.niche")}
-                    value={store.profile.content_niche ?? "N/A"}
+                    value={
+                      store.platform === "bilibili"
+                        ? (nicheLabels[store.profile.content_niche ?? ""] ?? store.profile.content_niche ?? "N/A")
+                        : (store.profile.content_niche ?? "N/A")
+                    }
                   />
                 </div>
+                {/* Bilibili-specific stats */}
+                {store.platform === "bilibili" && store.profile.raw_data && (
+                  <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-green-200 dark:border-green-800 pt-4">
+                    <Stat
+                      label={t("creator.coinRate")}
+                      value={`${(store.profile.raw_data.coin_rate as number ?? 0).toFixed(1)}%`}
+                    />
+                    <Stat
+                      label={t("creator.favoriteRate")}
+                      value={`${(store.profile.raw_data.favorite_rate as number ?? 0).toFixed(1)}%`}
+                    />
+                    <Stat
+                      label="LV"
+                      value={`${store.profile.raw_data.level ?? "N/A"}`}
+                    />
+                    <Stat
+                      label={t("creator.videoCount")}
+                      value={`${store.profile.raw_data.video_count ?? "N/A"}`}
+                    />
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -243,7 +275,7 @@ export default function CreatorPage() {
                     : t("creator.manualYoutubeSubtitle")}
                 </p>
               </div>
-              {store.platform === "youtube" && (
+              {(store.platform === "youtube" || store.platform === "bilibili") && (
                 <button
                   onClick={() => store.setUseManual(false)}
                   className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400"

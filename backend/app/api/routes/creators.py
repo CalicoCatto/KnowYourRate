@@ -90,14 +90,41 @@ async def lookup_creator(
         )
 
     elif body.platform == "bilibili":
-        from app.services.bilibili import get_bilibili_form_schema
-        schema = get_bilibili_form_schema()
-        raise HTTPException(
-            status_code=422,
-            detail={
-                "message": "B站数据暂不支持自动获取，请手动填写创作者数据。",
-                "form_schema": schema,
-            },
+        try:
+            from app.services.bilibili import fetch_bilibili_info
+
+            data = await fetch_bilibili_info(body.channel_url)
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"B站数据获取失败: {str(e)}")
+
+        creator = Creator(
+            platform="bilibili",
+            platform_id=data.get("platform_id", ""),
+            handle=data.get("handle", ""),
+            display_name=data.get("display_name", ""),
+            subscriber_count=data.get("subscriber_count"),
+            avg_views=data.get("avg_views"),
+            engagement_rate=data.get("engagement_rate"),
+            content_niche=data.get("content_niche"),
+            raw_data=data,
+        )
+        db.add(creator)
+        await db.flush()
+
+        return CreatorProfile(
+            id=creator.id,
+            platform=creator.platform,
+            platform_id=creator.platform_id,
+            handle=creator.handle,
+            display_name=creator.display_name,
+            subscriber_count=creator.subscriber_count,
+            avg_views=creator.avg_views,
+            engagement_rate=creator.engagement_rate,
+            content_niche=creator.content_niche,
+            raw_data=creator.raw_data,
+            fetched_at=creator.fetched_at,
         )
 
     elif body.platform == "douyin":
