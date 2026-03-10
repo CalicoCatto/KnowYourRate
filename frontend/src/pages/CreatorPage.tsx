@@ -8,14 +8,12 @@ import PlatformSelector from "@/components/PlatformSelector";
 import type { Platform, DealType, UsageRights, Exclusivity, CityTier } from "@/types";
 import {
   isCN,
-  DEAL_TYPE_LABELS,
   DEAL_TYPE_LABELS_INTL,
   DEAL_TYPE_LABELS_CN,
   NICHE_OPTIONS,
   NICHE_OPTIONS_CN,
   NICHE_LABELS,
   NICHE_LABELS_CN,
-  USAGE_RIGHTS_LABELS,
   USAGE_RIGHTS_LABELS_INTL,
   USAGE_RIGHTS_LABELS_CN,
   EXCLUSIVITY_LABELS,
