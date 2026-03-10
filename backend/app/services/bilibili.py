@@ -1,32 +1,21 @@
 """Bilibili (B站) data service.
 
 Fetches public creator data from B站 APIs:
-- User info: followers, name, level, avatar
-- Video list: recent videos with views, likes, coins, favorites, shares, comments
-- Calculated: avg views, engagement rate, coin rate, favorite rate
+- User info (card API): name, level, sign, avatar, archive count
+- Follower count (relation/stat API)
+- Video list (medialist API): recent videos with play counts + bvids
+- Video details (view API): likes, coins, favorites per video
 
+Uses stable public APIs that don't require WBI signing or login cookies.
 Private data (city tier distribution, watch time) requires manual input.
 """
 
-import hashlib
 import logging
 import re
-import time
-import urllib.parse
-import uuid
-from functools import reduce
 
 import httpx
 
 logger = logging.getLogger(__name__)
-
-# WBI signing mixin key reorder table (from Bilibili's JS)
-_MIXIN_KEY_ENC_TAB = [
-    46, 47, 18, 2, 53, 8, 23, 32, 15, 50, 10, 31, 58, 3, 45, 35,
-    27, 43, 5, 49, 33, 9, 42, 19, 29, 28, 14, 39, 12, 38, 41, 13,
-    37, 48, 7, 16, 24, 55, 40, 61, 26, 17, 0, 1, 60, 51, 30, 4,
-    22, 25, 54, 21, 56, 59, 6, 63, 57, 62, 11, 36, 20, 34, 44, 52,
-]
 
 _USER_AGENT = (
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
@@ -62,40 +51,6 @@ _NICHE_KEYWORDS_CN = {
 }
 
 
-def _get_mixin_key(img_key: str, sub_key: str) -> str:
-    """Derive WBI mixin key from img_key and sub_key."""
-    raw = img_key + sub_key
-    return reduce(lambda s, i: s + raw[i], _MIXIN_KEY_ENC_TAB, "")[:32]
-
-
-def _sign_wbi(params: dict, mixin_key: str) -> dict:
-    """Add WBI signature (wts + w_rid) to API params."""
-    params["wts"] = int(time.time())
-    # Filter special characters from values (required by B站 WBI spec)
-    filtered = {
-        k: "".join(ch for ch in str(v) if ch not in "!'()*")
-        for k, v in params.items()
-    }
-    # Sort and encode
-    query = urllib.parse.urlencode(sorted(filtered.items()))
-    md5 = hashlib.md5((query + mixin_key).encode()).hexdigest()
-    params["w_rid"] = md5
-    return params
-
-
-async def _get_wbi_keys(client: httpx.AsyncClient) -> tuple[str, str]:
-    """Fetch WBI signing keys from Bilibili nav API."""
-    resp = await client.get("https://api.bilibili.com/x/web-interface/nav", headers=_HEADERS)
-    data = resp.json().get("data", {})
-    wbi_img = data.get("wbi_img", {})
-    img_url = wbi_img.get("img_url", "")
-    sub_url = wbi_img.get("sub_url", "")
-    # Extract key from URL path: /bfs/wbi/xxx.png -> xxx
-    img_key = img_url.rsplit("/", 1)[-1].split(".")[0] if img_url else ""
-    sub_key = sub_url.rsplit("/", 1)[-1].split(".")[0] if sub_url else ""
-    return img_key, sub_key
-
-
 def extract_uid(url_or_uid: str) -> str | None:
     """Extract Bilibili UID from URL or direct input.
 
@@ -125,113 +80,136 @@ def extract_uid(url_or_uid: str) -> str | None:
     return None
 
 
+async def _init_session(client: httpx.AsyncClient) -> None:
+    """Visit bilibili.com to obtain anti-crawling cookies.
+
+    Some B站 APIs (like medialist) need cookies from the main site.
+    The card and relation/stat APIs work without cookies.
+    """
+    try:
+        await client.get("https://www.bilibili.com/", headers=_HEADERS)
+        # Get proper buvid3/buvid4 from SPI endpoint
+        spi_resp = await client.get(
+            "https://api.bilibili.com/x/frontend/finger/spi",
+            headers=_HEADERS,
+        )
+        spi_data = spi_resp.json()
+        if spi_data.get("code") == 0:
+            b3 = spi_data["data"].get("b_3", "")
+            b4 = spi_data["data"].get("b_4", "")
+            if b3:
+                client.cookies.set("buvid3", b3, domain=".bilibili.com")
+            if b4:
+                client.cookies.set("buvid4", b4, domain=".bilibili.com")
+    except Exception as e:
+        logger.warning("B站 session init failed: %s", e)
+
+
 async def fetch_bilibili_info(uid_or_url: str) -> dict:
     """Fetch Bilibili UP主 info from public APIs.
 
-    Returns a dict matching the CreatorProfile schema with additional
-    bilibili-specific fields (coin_rate, favorite_rate, etc.).
+    Strategy uses stable, non-WBI APIs:
+    1. /x/web-interface/card — user info (no auth needed)
+    2. /x/relation/stat — follower count (no auth needed)
+    3. /x/v2/medialist/resource/list — video list with play counts (needs cookies)
+    4. /x/web-interface/view — per-video detailed stats (no auth needed)
     """
     uid = extract_uid(uid_or_url)
     if not uid:
         raise ValueError(
-            f"无法识别B站UID。请输入UID数字或空间链接，例如: 12345 或 https://space.bilibili.com/12345"
+            "无法识别B站UID。请输入UID数字或空间链接，例如: 12345 或 https://space.bilibili.com/12345"
         )
 
-    # Generate browser-like cookies required by B站 anti-crawling
-    cookies = {
-        "buvid3": str(uuid.uuid4()) + "infoc",
-        "b_nut": str(int(time.time())),
-    }
+    async with httpx.AsyncClient(timeout=20.0, follow_redirects=True) as client:
+        # 0. Init session for cookie-dependent APIs
+        await _init_session(client)
 
-    async with httpx.AsyncClient(timeout=15.0, cookies=cookies) as client:
-        # 1. Get WBI signing keys
-        img_key, sub_key = await _get_wbi_keys(client)
-        mixin_key = _get_mixin_key(img_key, sub_key) if img_key and sub_key else ""
-
-        # 2. Fetch user info
-        user_params = {"mid": uid}
-        if mixin_key:
-            user_params = _sign_wbi(user_params, mixin_key)
-
-        user_resp = await client.get(
-            "https://api.bilibili.com/x/space/wbi/acc/info",
-            params=user_params,
+        # 1. Fetch user info via card API (stable, no WBI needed)
+        card_resp = await client.get(
+            "https://api.bilibili.com/x/web-interface/card",
+            params={"mid": uid, "photo": "false"},
             headers=_HEADERS,
         )
-        user_data = user_resp.json()
+        card_data = card_resp.json()
 
-        if user_data.get("code") != 0:
-            msg = user_data.get("message", "未知错误")
+        if card_data.get("code") != 0:
+            msg = card_data.get("message", "未知错误")
             raise ValueError(f"获取B站用户信息失败: {msg} (UID: {uid})")
 
-        info = user_data["data"]
-        name = info.get("name", "")
-        followers = info.get("fans", 0)  # Sometimes in this field
-        level = info.get("level", 0)
-        sign = info.get("sign", "")
-        face = info.get("face", "")
+        card = card_data["data"]["card"]
+        name = card.get("name", "")
+        level = card.get("level_info", {}).get("current_level", 0)
+        sign = card.get("sign", "")
+        face = card.get("face", "")
+        fans = card.get("fans", 0)
+        archive_count = card_data["data"].get("archive_count", 0)
+        like_num = card_data["data"].get("like_num", 0)
 
-        # 3. Fetch follower count from relation/stat API (more reliable)
-        stat_resp = await client.get(
-            "https://api.bilibili.com/x/relation/stat",
-            params={"vmid": uid},
-            headers=_HEADERS,
-        )
-        stat_data = stat_resp.json()
-        if stat_data.get("code") == 0:
-            followers = stat_data["data"].get("follower", followers)
-
-        # 4. Fetch recent videos (last 30, sorted by newest)
-        search_params = {
-            "mid": uid,
-            "ps": "30",
-            "pn": "1",
-            "order": "pubdate",
-        }
-        if mixin_key:
-            search_params = _sign_wbi(search_params, mixin_key)
-
-        video_resp = await client.get(
-            "https://api.bilibili.com/x/space/wbi/arc/search",
-            params=search_params,
-            headers=_HEADERS,
-        )
-        video_data = video_resp.json()
-
-        videos = []
-        video_api_code = video_data.get("code")
-        if video_api_code == 0:
-            vlist = video_data.get("data", {}).get("list", {}).get("vlist", [])
-            videos = vlist
-        else:
-            logger.warning(
-                "B站视频列表获取失败 (UID: %s): code=%s, message=%s",
-                uid, video_api_code, video_data.get("message", ""),
+        # 2. Fetch follower count from relation/stat API (more accurate)
+        try:
+            stat_resp = await client.get(
+                "https://api.bilibili.com/x/relation/stat",
+                params={"vmid": uid},
+                headers=_HEADERS,
             )
+            stat_data = stat_resp.json()
+            if stat_data.get("code") == 0:
+                fans = stat_data["data"].get("follower", fans)
+        except Exception:
+            pass
 
-        # 5. Calculate metrics from videos
-        total_views = 0
-        total_likes = 0  # Not available in vlist, use video_review (comments)
-        total_coins = 0
-        total_favorites = 0
-        total_comments = 0
-        total_danmaku = 0
+        # 3. Fetch recent videos via medialist API (needs cookies)
+        videos = []
+        try:
+            ml_resp = await client.get(
+                "https://api.bilibili.com/x/v2/medialist/resource/list",
+                params={
+                    "type": 1,
+                    "biz_id": uid,
+                    "oid": uid,
+                    "otype": 2,
+                    "ps": 20,
+                    "direction": "false",
+                    "desc": "true",
+                    "sort_field": 1,
+                    "tid": 0,
+                    "with_current": "true",
+                },
+                headers={**_HEADERS, "Referer": f"https://space.bilibili.com/{uid}"},
+            )
+            ml_data = ml_resp.json()
+            if ml_data.get("code") == 0:
+                media_list = ml_data.get("data", {}).get("media_list") or []
+                for item in media_list:
+                    cnt = item.get("cnt_info", {})
+                    play = cnt.get("play", 0)
+                    if isinstance(play, str):
+                        play = 0
+                    videos.append({
+                        "bvid": item.get("bv_id", ""),
+                        "title": item.get("title", ""),
+                        "play": play,
+                    })
+            else:
+                logger.warning(
+                    "B站视频列表获取失败 (UID: %s): code=%s, msg=%s",
+                    uid, ml_data.get("code"), ml_data.get("message", ""),
+                )
+        except Exception as e:
+            logger.warning("B站视频列表请求异常 (UID: %s): %s", uid, e)
+
         video_count = len(videos)
 
-        for v in videos:
-            play = v.get("play", 0)
-            # Handle hidden play counts (返回 "--")
-            if isinstance(play, str):
-                play = 0
-            total_views += play
-            total_comments += v.get("video_review", 0) or 0  # comment count
-            total_danmaku += v.get("review", 0) or 0  # actually this might be comments
+        # 4. Calculate total views from medialist
+        total_views = sum(v["play"] for v in videos)
+        avg_views = total_views // video_count if video_count > 0 else 0
 
-        # For detailed stats (coins, favorites), fetch top 10 videos individually
-        coin_sample_count = 0
-        fav_sample_count = 0
-        like_sample_count = 0
+        # 5. Fetch detailed stats for up to 10 videos (coins, favorites, likes)
+        coin_total = 0
+        fav_total = 0
+        like_total = 0
         sample_views = 0
+        sample_count = 0
 
         for v in videos[:10]:
             bvid = v.get("bvid", "")
@@ -250,29 +228,26 @@ async def fetch_bilibili_info(uid_or_url: str) -> dict:
                     if isinstance(views, str):
                         views = 0
                     sample_views += views
-                    coin_sample_count += stat.get("coin", 0)
-                    fav_sample_count += stat.get("favorite", 0)
-                    like_sample_count += stat.get("like", 0)
+                    coin_total += stat.get("coin", 0)
+                    fav_total += stat.get("favorite", 0)
+                    like_total += stat.get("like", 0)
+                    sample_count += 1
             except Exception:
                 continue
 
-        # Calculate averages
-        avg_views = total_views // video_count if video_count > 0 else 0
-
-        # Engagement rate = (likes + coins + favorites + comments) / views * 100
+        # 6. Calculate rates
         if sample_views > 0:
             engagement_rate = round(
-                (like_sample_count + coin_sample_count + fav_sample_count) / sample_views * 100,
-                2,
+                (like_total + coin_total + fav_total) / sample_views * 100, 2
             )
-            coin_rate = round(coin_sample_count / sample_views * 100, 2)
-            favorite_rate = round(fav_sample_count / sample_views * 100, 2)
+            coin_rate = round(coin_total / sample_views * 100, 2)
+            favorite_rate = round(fav_total / sample_views * 100, 2)
         else:
             engagement_rate = 0.0
             coin_rate = 0.0
             favorite_rate = 0.0
 
-        # Guess niche from video titles + user sign
+        # 7. Guess niche from video titles + user sign
         niche_text = sign + " " + " ".join(v.get("title", "") for v in videos[:10])
         content_niche = _guess_niche_cn(niche_text)
 
@@ -282,7 +257,7 @@ async def fetch_bilibili_info(uid_or_url: str) -> dict:
             "handle": uid,
             "title": name,
             "display_name": name,
-            "subscriber_count": followers,
+            "subscriber_count": fans,
             "avg_views": avg_views,
             "engagement_rate": engagement_rate,
             "content_niche": content_niche,
@@ -292,8 +267,10 @@ async def fetch_bilibili_info(uid_or_url: str) -> dict:
             "sign": sign,
             "face": face,
             "video_count": video_count,
+            "archive_count": archive_count,
+            "like_num": like_num,
             "total_views": total_views,
-            "sample_video_count": min(10, video_count),
+            "sample_video_count": sample_count,
         }
 
 
