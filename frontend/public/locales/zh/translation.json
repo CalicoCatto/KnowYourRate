@@ -74,7 +74,27 @@
     "manualYoutubeSubtitle": "手动输入您的 YouTube 频道数据。",
     "fetchFailed": "获取资料失败，您可以选择手动输入数据。",
     "isFirstBrandDeal": "首次品牌合作",
-    "isFirstBrandDealDesc": "这是我第一次与品牌合作"
+    "isFirstBrandDealDesc": "这是我第一次与品牌合作",
+    "bilibili": "B站",
+    "douyin": "抖音",
+    "kuaishou": "快手",
+    "manualCNSubtitle": "请手动填写创作者数据。",
+    "bilibiliFields": "B站特有指标",
+    "coinRate": "投币率 (%)",
+    "favoriteRate": "收藏率 (%)",
+    "douyinFields": "抖音特有指标",
+    "completionRate": "完播率 (%)",
+    "shareRate": "转发率 (%)",
+    "kuaishouFields": "快手特有指标",
+    "revisitRate": "回访率 (%)",
+    "cityTier": "城市线级",
+    "mcnStatus": "MCN签约状态",
+    "mcnNone": "独立创作者",
+    "mcnSigned": "已签MCN",
+    "mcnExclusive": "MCN独家签约",
+    "hasLivestream": "包含直播",
+    "hasLivestreamDesc": "本次合作包含直播电商环节",
+    "numPlatforms": "合作平台数量"
   },
   "analysis": {
     "title": "分析进行中",
@@ -134,7 +154,9 @@
     "savings": "节省",
     "negotiationScripts": "谈判话术脚本",
     "copyPoint": "复制",
-    "copied": "已复制！"
+    "copied": "已复制！",
+    "taxEstimate": "税费估算",
+    "platformPricing": "平台官方报价参考"
   },
   "history": {
     "title": "历史报告",

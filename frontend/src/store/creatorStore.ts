@@ -1,5 +1,7 @@
 import { create } from "zustand";
-import type { Platform, CreatorProfile, DealType, UsageRights, Exclusivity } from "@/types";
+import type { Platform, CreatorProfile, DealType, UsageRights, Exclusivity, CityTier } from "@/types";
+
+const CN_MANUAL_PLATFORMS = ["tiktok", "bilibili", "douyin", "kuaishou"];
 
 interface CreatorState {
   platform: Platform | null;
@@ -18,6 +20,16 @@ interface CreatorState {
   usageRights: UsageRights;
   exclusivity: Exclusivity;
   isFirstBrandDeal: boolean;
+  /* CN-specific fields */
+  manualCoinRate: string;
+  manualFavoriteRate: string;
+  manualCompletionRate: string;
+  manualShareRate: string;
+  manualRevisitRate: string;
+  manualCityTier: CityTier;
+  manualMcnStatus: string;
+  hasLivestream: boolean;
+  numPlatforms: number;
 
   setPlatform: (p: Platform | null) => void;
   setChannelUrl: (v: string) => void;
@@ -35,6 +47,15 @@ interface CreatorState {
   setUsageRights: (v: UsageRights) => void;
   setExclusivity: (v: Exclusivity) => void;
   setIsFirstBrandDeal: (v: boolean) => void;
+  setManualCoinRate: (v: string) => void;
+  setManualFavoriteRate: (v: string) => void;
+  setManualCompletionRate: (v: string) => void;
+  setManualShareRate: (v: string) => void;
+  setManualRevisitRate: (v: string) => void;
+  setManualCityTier: (v: CityTier) => void;
+  setManualMcnStatus: (v: string) => void;
+  setHasLivestream: (v: boolean) => void;
+  setNumPlatforms: (v: number) => void;
   resetPlatform: (p: Platform) => void;
 }
 
@@ -55,6 +76,15 @@ export const useCreatorStore = create<CreatorState>()((set) => ({
   usageRights: "organic_only",
   exclusivity: "none",
   isFirstBrandDeal: false,
+  manualCoinRate: "",
+  manualFavoriteRate: "",
+  manualCompletionRate: "",
+  manualShareRate: "",
+  manualRevisitRate: "",
+  manualCityTier: "other",
+  manualMcnStatus: "none",
+  hasLivestream: false,
+  numPlatforms: 1,
 
   setPlatform: (platform) => set({ platform }),
   setChannelUrl: (channelUrl) => set({ channelUrl }),
@@ -72,11 +102,27 @@ export const useCreatorStore = create<CreatorState>()((set) => ({
   setUsageRights: (usageRights) => set({ usageRights }),
   setExclusivity: (exclusivity) => set({ exclusivity }),
   setIsFirstBrandDeal: (isFirstBrandDeal) => set({ isFirstBrandDeal }),
+  setManualCoinRate: (manualCoinRate) => set({ manualCoinRate }),
+  setManualFavoriteRate: (manualFavoriteRate) => set({ manualFavoriteRate }),
+  setManualCompletionRate: (manualCompletionRate) => set({ manualCompletionRate }),
+  setManualShareRate: (manualShareRate) => set({ manualShareRate }),
+  setManualRevisitRate: (manualRevisitRate) => set({ manualRevisitRate }),
+  setManualCityTier: (manualCityTier) => set({ manualCityTier }),
+  setManualMcnStatus: (manualMcnStatus) => set({ manualMcnStatus }),
+  setHasLivestream: (hasLivestream) => set({ hasLivestream }),
+  setNumPlatforms: (numPlatforms) => set({ numPlatforms }),
   resetPlatform: (p) =>
     set({
       platform: p,
       profile: null,
       fetchError: null,
-      useManual: p === "tiktok",
+      useManual: CN_MANUAL_PLATFORMS.includes(p),
+      manualCoinRate: "",
+      manualFavoriteRate: "",
+      manualCompletionRate: "",
+      manualShareRate: "",
+      manualRevisitRate: "",
+      manualCityTier: "other",
+      manualMcnStatus: "none",
     }),
 }));

@@ -95,7 +95,7 @@ export async function lookupCreator(
 /* ------------------------------------------------------------------ */
 
 export async function startAnalysis(
-  request: AnalysisRequest,
+  request: AnalysisRequest | Record<string, unknown>,
 ): Promise<AnalysisStatus> {
   const { data } = await api.post<AnalysisStatus>("/analysis/run", request);
   return data;

@@ -9,12 +9,25 @@ import json
 import logging
 
 from app.agents.base import BaseAgent
-from app.utils.prompts import (
-    DEBATE_BULL_PROMPT,
-    DEBATE_BEAR_PROMPT,
-    DEBATE_CROSS_REBUTTAL_PROMPT,
-    DEBATE_JUDGE_PROMPT,
-)
+from app.edition import is_cn
+
+
+def _load_debate_prompts():
+    if is_cn():
+        from app.utils.prompts_cn import (
+            DEBATE_BULL_PROMPT_CN as BULL,
+            DEBATE_BEAR_PROMPT_CN as BEAR,
+            DEBATE_CROSS_REBUTTAL_PROMPT_CN as CROSS,
+            DEBATE_JUDGE_PROMPT_CN as JUDGE,
+        )
+    else:
+        from app.utils.prompts import (
+            DEBATE_BULL_PROMPT as BULL,
+            DEBATE_BEAR_PROMPT as BEAR,
+            DEBATE_CROSS_REBUTTAL_PROMPT as CROSS,
+            DEBATE_JUDGE_PROMPT as JUDGE,
+        )
+    return BULL, BEAR, CROSS, JUDGE
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +39,8 @@ class DebateAgent(BaseAgent):
     description = "Adversarial debate between creator agent and brand manager"
 
     async def run(self, context: dict) -> dict:
+        DEBATE_BULL_PROMPT, DEBATE_BEAR_PROMPT, DEBATE_CROSS_REBUTTAL_PROMPT, DEBATE_JUDGE_PROMPT = _load_debate_prompts()
+
         creator_data = context.get("creator_data", {})
         brand_info = context.get("brand_info", {})
         creator_analysis = context.get("creator_analysis", {})

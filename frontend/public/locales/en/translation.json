@@ -74,7 +74,27 @@
     "manualYoutubeSubtitle": "Enter your YouTube channel stats manually.",
     "fetchFailed": "Failed to fetch profile. You can enter data manually instead.",
     "isFirstBrandDeal": "First brand deal",
-    "isFirstBrandDealDesc": "This is my first time working with a brand"
+    "isFirstBrandDealDesc": "This is my first time working with a brand",
+    "bilibili": "Bilibili",
+    "douyin": "Douyin",
+    "kuaishou": "Kuaishou",
+    "manualCNSubtitle": "Please enter creator data manually.",
+    "bilibiliFields": "Bilibili-specific Metrics",
+    "coinRate": "Coin Rate (%)",
+    "favoriteRate": "Favorite Rate (%)",
+    "douyinFields": "Douyin-specific Metrics",
+    "completionRate": "Completion Rate (%)",
+    "shareRate": "Share Rate (%)",
+    "kuaishouFields": "Kuaishou-specific Metrics",
+    "revisitRate": "Revisit Rate (%)",
+    "cityTier": "City Tier",
+    "mcnStatus": "MCN Status",
+    "mcnNone": "Independent",
+    "mcnSigned": "MCN Signed",
+    "mcnExclusive": "MCN Exclusive",
+    "hasLivestream": "Includes Livestream",
+    "hasLivestreamDesc": "This deal includes livestream commerce components",
+    "numPlatforms": "Number of Platforms"
   },
   "analysis": {
     "title": "Analysis in Progress",
@@ -134,7 +154,9 @@
     "savings": "Savings",
     "negotiationScripts": "Negotiation Scripts",
     "copyPoint": "Copy",
-    "copied": "Copied!"
+    "copied": "Copied!",
+    "taxEstimate": "Tax Estimate",
+    "platformPricing": "Platform Official Pricing Reference"
   },
   "history": {
     "title": "Report History",

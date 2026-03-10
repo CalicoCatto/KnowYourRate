@@ -4,20 +4,34 @@ Pipeline:
   Router → decides fast_track or full_pipeline
   fast_track:    Agent A (creator profile) → Agent D (report)
   full_pipeline: Agent A ‖ Agent B (parallel) → Agent C (debate) → Agent D (report)
+
+Supports both international and CN editions via EDITION env var.
 """
 
 import asyncio
 import logging
 from collections.abc import Callable
 
-from app.agents.creator_profile import CreatorProfileAgent
-from app.agents.market_data import MarketIntelAgent
+from app.edition import is_cn
 from app.agents.debate import DebateAgent
-from app.agents.report import ReportAgent
 from app.llm.provider import LLMClient
-from app.utils.pricing_tables import route_complexity
 
 logger = logging.getLogger(__name__)
+
+
+def _load_agents():
+    """Load agent classes based on current edition."""
+    if is_cn():
+        from app.agents.creator_profile_cn import CreatorProfileCNAgent as ProfileAgent
+        from app.agents.market_data_cn import MarketIntelCNAgent as MarketAgent
+        from app.agents.report_cn import ReportCNAgent as ReportAgentCls
+        from app.utils.pricing_tables_cn import route_complexity_cn as route_fn
+    else:
+        from app.agents.creator_profile import CreatorProfileAgent as ProfileAgent
+        from app.agents.market_data import MarketIntelAgent as MarketAgent
+        from app.agents.report import ReportAgent as ReportAgentCls
+        from app.utils.pricing_tables import route_complexity as route_fn
+    return ProfileAgent, MarketAgent, ReportAgentCls, route_fn
 
 
 class AgentOrchestrator:
@@ -49,6 +63,8 @@ class AgentOrchestrator:
             if on_progress:
                 on_progress(agent, status)
 
+        ProfileAgent, MarketAgent, ReportAgentCls, route_fn = _load_agents()
+
         context = {
             "creator_data": creator_data,
             "brand_info": brand_info,
@@ -56,18 +72,29 @@ class AgentOrchestrator:
 
         # --- Route complexity ---
         niche = creator_data.get("content_niche", "lifestyle_vlog")
-        route = route_complexity(
-            brand_name=brand_info.get("brand_name"),
-            exclusivity=brand_info.get("exclusivity", "none"),
-            usage_rights=brand_info.get("usage_rights", "organic_only"),
-            niche=niche,
-            is_first_brand_deal=brand_info.get("is_first_brand_deal", False),
-        )
-        logger.info("Pipeline routing: %s", route)
+        if is_cn():
+            route = route_fn(
+                brand_name=brand_info.get("brand_name"),
+                exclusivity=brand_info.get("exclusivity", "none"),
+                usage_rights=brand_info.get("usage_rights", "organic_only"),
+                niche=niche,
+                is_first_brand_deal=brand_info.get("is_first_brand_deal", False),
+                has_livestream=brand_info.get("has_livestream", False),
+                num_platforms=brand_info.get("num_platforms", 1),
+            )
+        else:
+            route = route_fn(
+                brand_name=brand_info.get("brand_name"),
+                exclusivity=brand_info.get("exclusivity", "none"),
+                usage_rights=brand_info.get("usage_rights", "organic_only"),
+                niche=niche,
+                is_first_brand_deal=brand_info.get("is_first_brand_deal", False),
+            )
+        logger.info("Pipeline routing: %s (edition=%s)", route, "cn" if is_cn() else "international")
 
         # --- Phase 1: Creator Profile (always runs) ---
         logger.info("Pipeline Phase 1: Creator Profile Agent")
-        creator_agent = CreatorProfileAgent(self.llm_client, self.language)
+        creator_agent = ProfileAgent(self.llm_client, self.language)
         progress("creator_profile", "running")
 
         if route == "full_pipeline":
@@ -78,7 +105,7 @@ class AgentOrchestrator:
 
             # --- Phase 2: Market Intel (parallel-ready, but depends on A) ---
             logger.info("Pipeline Phase 2: Market Intelligence Agent")
-            market_agent = MarketIntelAgent(self.llm_client, self.language)
+            market_agent = MarketAgent(self.llm_client, self.language)
             progress("market_intel", "running")
             market_result = await market_agent.run(context)
             progress("market_intel", "completed")
@@ -104,7 +131,7 @@ class AgentOrchestrator:
 
         # --- Final Phase: Report Generation ---
         logger.info("Pipeline Final Phase: Report Agent")
-        report_agent = ReportAgent(self.llm_client, self.language)
+        report_agent = ReportAgentCls(self.llm_client, self.language)
         progress("report", "running")
         final_report = await report_agent.run(context)
         progress("report", "completed")

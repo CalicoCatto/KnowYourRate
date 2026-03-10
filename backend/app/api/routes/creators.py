@@ -89,5 +89,38 @@ async def lookup_creator(
             },
         )
 
+    elif body.platform == "bilibili":
+        from app.services.bilibili import get_bilibili_form_schema
+        schema = get_bilibili_form_schema()
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "B站数据暂不支持自动获取，请手动填写创作者数据。",
+                "form_schema": schema,
+            },
+        )
+
+    elif body.platform == "douyin":
+        from app.services.douyin import get_douyin_form_schema
+        schema = get_douyin_form_schema()
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "抖音数据暂不支持自动获取，请手动填写创作者数据。",
+                "form_schema": schema,
+            },
+        )
+
+    elif body.platform == "kuaishou":
+        from app.services.kuaishou import get_kuaishou_form_schema
+        schema = get_kuaishou_form_schema()
+        raise HTTPException(
+            status_code=422,
+            detail={
+                "message": "快手数据暂不支持自动获取，请手动填写创作者数据。",
+                "form_schema": schema,
+            },
+        )
+
     else:
         raise HTTPException(status_code=400, detail=f"Unsupported platform: {body.platform}")

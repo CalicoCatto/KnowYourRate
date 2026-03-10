@@ -248,6 +248,39 @@ export default function ReportPage() {
               </p>
             </div>
           )}
+
+          {/* CN-specific: Tax Estimate */}
+          {(report as Record<string, unknown>).tax_estimate && (
+            <div className="card">
+              <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+                {t("report.taxEstimate")}
+              </h3>
+              <div className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                {Object.entries(
+                  (report as Record<string, unknown>).tax_estimate as Record<string, unknown>,
+                ).map(([key, val]) => (
+                  <div key={key} className="flex justify-between border-b border-gray-100 dark:border-gray-800 pb-1">
+                    <span className="text-gray-500 dark:text-gray-400">{key}</span>
+                    <span className="font-medium">
+                      {typeof val === "number" ? fmtCurrency(val, currency) : String(val)}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* CN-specific: Platform Official Pricing */}
+          {(report as Record<string, unknown>).platform_pricing && (
+            <div className="card">
+              <h3 className="mb-3 text-lg font-semibold text-gray-900 dark:text-white">
+                {t("report.platformPricing")}
+              </h3>
+              <p className="leading-relaxed text-gray-700 dark:text-gray-300 whitespace-pre-line">
+                {JSON.stringify((report as Record<string, unknown>).platform_pricing, null, 2)}
+              </p>
+            </div>
+          )}
         </>
       ) : (
         <DetailedAnalysis agentOutputs={agentOutputs} finalReport={report} />
@@ -267,7 +300,8 @@ export default function ReportPage() {
 }
 
 function fmtCurrency(value: number, currency: string) {
-  return new Intl.NumberFormat("en-US", {
+  const locale = currency === "CNY" ? "zh-CN" : "en-US";
+  return new Intl.NumberFormat(locale, {
     style: "currency",
     currency,
     maximumFractionDigits: 0,
