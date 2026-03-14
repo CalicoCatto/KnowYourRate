@@ -5,6 +5,8 @@ import LanguageDetector from "i18next-browser-languagedetector";
 import en from "../public/locales/en/translation.json";
 import zh from "../public/locales/zh/translation.json";
 
+const isCNEdition = (import.meta.env.VITE_EDITION as string) === "cn";
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
@@ -13,7 +15,7 @@ i18n
       en: { translation: en },
       zh: { translation: zh },
     },
-    fallbackLng: "en",
+    fallbackLng: isCNEdition ? "zh" : "en",
     supportedLngs: ["en", "zh"],
     interpolation: { escapeValue: false },
     detection: {

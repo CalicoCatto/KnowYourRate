@@ -3,6 +3,14 @@ import type { Platform, CreatorProfile, DealType, UsageRights, Exclusivity, City
 
 const CN_MANUAL_PLATFORMS = ["tiktok", "douyin", "kuaishou"];
 
+const DEFAULT_DEAL_TYPE: Record<string, DealType> = {
+  youtube: "dedicated_video",
+  tiktok: "dedicated_video",
+  bilibili: "bilibili_custom_video",
+  douyin: "douyin_video",
+  kuaishou: "kuaishou_video",
+};
+
 interface CreatorState {
   platform: Platform | null;
   channelUrl: string;
@@ -117,6 +125,7 @@ export const useCreatorStore = create<CreatorState>()((set) => ({
       profile: null,
       fetchError: null,
       useManual: CN_MANUAL_PLATFORMS.includes(p),
+      dealType: DEFAULT_DEAL_TYPE[p] ?? "dedicated_video",
       manualCoinRate: "",
       manualFavoriteRate: "",
       manualCompletionRate: "",

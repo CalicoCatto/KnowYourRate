@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
+import { isCN } from "@/types";
 
 interface SettingsState {
   provider: string | null;
@@ -20,7 +21,7 @@ export const useSettingsStore = create<SettingsState>()(
       provider: null,
       model: null,
       hasApiKey: false,
-      language: "en",
+      language: isCN ? "zh" : "en",
       darkMode: false,
       setProvider: (provider, model) => set({ provider, model: model ?? null }),
       setHasApiKey: (has) => set({ hasApiKey: has }),

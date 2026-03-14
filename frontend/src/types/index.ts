@@ -268,6 +268,28 @@ export const DEAL_TYPE_LABELS_CN: Record<string, string> = {
   livestream_clip: "直播切片",
 };
 
+/** Deal types filtered by CN platform */
+export const DEAL_TYPES_BY_PLATFORM: Record<string, Record<string, string>> = {
+  bilibili: {
+    bilibili_custom_video: "B站定制视频",
+    bilibili_dynamic: "B站动态",
+    bilibili_image_text: "B站图文",
+    livestream_slot: "直播坑位",
+    livestream_clip: "直播切片",
+  },
+  douyin: {
+    douyin_video: "抖音视频",
+    douyin_image: "抖音图文",
+    livestream_slot: "直播坑位",
+    livestream_clip: "直播切片",
+  },
+  kuaishou: {
+    kuaishou_video: "快手视频",
+    livestream_slot: "直播坑位",
+    livestream_clip: "直播切片",
+  },
+};
+
 export type UsageRights =
   | "organic_only"
   | "brand_repost_30d"

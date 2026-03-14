@@ -53,17 +53,19 @@ CREATOR_PROFILE_PROMPT_CN = """\
 6.【定性价格调整】基于你的定性分析，已计算的价格区间是否需要调整？\
 建议一个百分比调整（-20%到+30%），附清晰理由。这仅用于微调——基础计算是锚点。
 
+重要：所有字符串值必须使用中文。JSON的key保持英文，但value中的文本内容全部用中文撰写。
+
 返回JSON：
 {{
   "content_quality_score": 1-10,
   "audience_value_score": 1-10,
   "growth_signal": "growing" | "stable" | "declining",
-  "unique_selling_points": ["usp1", "usp2", ...],
+  "unique_selling_points": ["中文卖点1", "中文卖点2", ...],
   "negotiation_leverage": "low" | "medium" | "high",
   "qualitative_adjustment_pct": number (-20 to +30),
-  "qualitative_adjustment_reason": "string",
-  "key_insights": ["insight1", "insight2", ...],
-  "reasoning": "string"
+  "qualitative_adjustment_reason": "中文说明",
+  "key_insights": ["中文洞察1", "中文洞察2", ...],
+  "reasoning": "中文推理过程"
 }}
 """
 
@@ -106,21 +108,23 @@ MARKET_INTEL_PROMPT_CN = """\
 
 5.【谈判策略】针对品牌类型和合作条件，最有效的谈判方式是什么？
 
+重要：所有字符串值必须使用中文。JSON的key保持英文，但value中的文本内容全部用中文撰写。
+
 返回JSON：
 {{
-  "comparable_deals_context": "描述同类达人的收费情况",
+  "comparable_deals_context": "中文描述同类达人的收费情况",
   "brand_intelligence": {{
     "budget_tier": "low" | "medium" | "high" | "very_high",
     "negotiation_flexibility": "low" | "medium" | "high",
     "payment_reliability": "unknown" | "良好" | "优秀",
-    "key_insight": "string"
+    "key_insight": "中文洞察"
   }},
-  "market_timing_factors": ["factor1", "factor2", ...],
-  "deal_structure_advice": ["advice1", "advice2", ...],
-  "negotiation_tips": ["tip1", "tip2", ...],
+  "market_timing_factors": ["中文因素1", "中文因素2", ...],
+  "deal_structure_advice": ["中文建议1", "中文建议2", ...],
+  "negotiation_tips": ["中文技巧1", "中文技巧2", ...],
   "market_adjustment_pct": number (-15 to +15),
-  "market_adjustment_reason": "string",
-  "reasoning": "string"
+  "market_adjustment_reason": "中文说明",
+  "reasoning": "中文推理过程"
 }}
 """
 
@@ -265,6 +269,8 @@ DEBATE_JUDGE_PROMPT_CN = """\
 重要：你的fair_market价格应以引擎计算的price_mid（¥{price_mid:,.0f}）为锚点。\
 最多偏离±30%，除非有充分理由。
 
+重要：所有字符串值必须使用中文撰写。
+
 输出JSON：
 {{
   "final_price_range": {{
@@ -274,11 +280,11 @@ DEBATE_JUDGE_PROMPT_CN = """\
   }},
   "confidence": 0.0-1.0,
   "uncertainty_flag": true | false,
-  "key_factors": ["factor1", "factor2", ...],
-  "bull_strongest_argument": "string",
-  "bear_strongest_argument": "string",
-  "consensus_areas": ["area1", "area2", ...],
-  "judge_notes": "string (200字以内)"
+  "key_factors": ["中文因素1", "中文因素2", ...],
+  "bull_strongest_argument": "中文论述",
+  "bear_strongest_argument": "中文论述",
+  "consensus_areas": ["中文共识1", "中文共识2", ...],
+  "judge_notes": "中文评注 (200字以内)"
 }}
 """
 

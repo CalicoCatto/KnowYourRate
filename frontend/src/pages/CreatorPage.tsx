@@ -9,7 +9,7 @@ import type { Platform, DealType, UsageRights, Exclusivity, CityTier } from "@/t
 import {
   isCN,
   DEAL_TYPE_LABELS_INTL,
-  DEAL_TYPE_LABELS_CN,
+  DEAL_TYPES_BY_PLATFORM,
   NICHE_OPTIONS,
   NICHE_OPTIONS_CN,
   NICHE_LABELS,
@@ -135,8 +135,10 @@ export default function CreatorPage() {
     ((isLookupPlatform && (store.profile || (store.useManual && manualValid))) ||
       (isCNManualPlatform && manualValid));
 
-  /* Edition-aware label maps */
-  const dealTypeLabels = isCN ? DEAL_TYPE_LABELS_CN : DEAL_TYPE_LABELS_INTL;
+  /* Edition-aware label maps (CN: filter by selected platform) */
+  const dealTypeLabels = isCN
+    ? (DEAL_TYPES_BY_PLATFORM[store.platform ?? ""] ?? {})
+    : DEAL_TYPE_LABELS_INTL;
   const usageRightsLabels = isCN ? USAGE_RIGHTS_LABELS_CN : USAGE_RIGHTS_LABELS_INTL;
   const exclusivityLabels = isCN ? EXCLUSIVITY_LABELS_CN : EXCLUSIVITY_LABELS;
   const nicheOptions = isCN ? NICHE_OPTIONS_CN : NICHE_OPTIONS;
