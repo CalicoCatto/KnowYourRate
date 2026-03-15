@@ -97,7 +97,20 @@
     "mcnExclusive": "MCN Exclusive",
     "hasLivestream": "Includes Livestream",
     "hasLivestreamDesc": "This deal includes livestream commerce components",
-    "numPlatforms": "Number of Platforms"
+    "numPlatforms": "Number of Platforms",
+    "browseBrands": "Brand DB",
+    "brandDatabase": "Brand Database",
+    "searchBrandPlaceholder": "Search brand name...",
+    "allCategories": "All Categories",
+    "search": "Search",
+    "loading": "Loading...",
+    "noBrandsFound": "No brands found",
+    "budgetTier": "Budget Tier",
+    "negotiationFlex": "Negotiation Flex",
+    "paymentReliability": "Payment Reliability",
+    "budget": "Budget",
+    "negotiation": "Negotiation",
+    "payment": "Payment"
   },
   "analysis": {
     "title": "Analysis in Progress",

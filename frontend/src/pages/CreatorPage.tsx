@@ -5,6 +5,7 @@ import { lookupCreator, startAnalysis } from "@/api/client";
 import { useSettingsStore } from "@/store/settingsStore";
 import { useCreatorStore } from "@/store/creatorStore";
 import PlatformSelector from "@/components/PlatformSelector";
+import BrandSearch from "@/components/BrandSearch";
 import type { Platform, DealType, UsageRights, Exclusivity, CityTier } from "@/types";
 import {
   isCN,
@@ -482,12 +483,20 @@ export default function CreatorPage() {
 
             <div>
               <label className="label">{t("creator.brandName")}</label>
-              <input
-                className="input"
-                placeholder={t("creator.brandNamePlaceholder")}
-                value={store.brandName}
-                onChange={(e) => store.setBrandName(e.target.value)}
-              />
+              {isCN ? (
+                <BrandSearch
+                  platform={store.platform}
+                  value={store.brandName}
+                  onChange={store.setBrandName}
+                />
+              ) : (
+                <input
+                  className="input"
+                  placeholder={t("creator.brandNamePlaceholder")}
+                  value={store.brandName}
+                  onChange={(e) => store.setBrandName(e.target.value)}
+                />
+              )}
             </div>
 
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">

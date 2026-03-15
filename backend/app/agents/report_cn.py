@@ -26,6 +26,7 @@ class ReportCNAgent(BaseAgent):
         creator_analysis = context.get("creator_analysis", {})
         market_intel = context.get("market_intel", {})
         debate_result = context.get("debate_result", {})
+        data_quality = context.get("data_quality", {})
 
         display_name = creator_data.get("display_name", "Unknown")
         platform = creator_data.get("platform", "bilibili")
@@ -73,6 +74,8 @@ class ReportCNAgent(BaseAgent):
             )
         else:
             language_instruction = "请用中文撰写整份报告。"
+
+        data_quality_str = json.dumps(data_quality, default=str, ensure_ascii=False) if data_quality else "{}"
 
         prompt = self.build_prompt(
             REPORT_PROMPT_CN,
@@ -123,6 +126,8 @@ class ReportCNAgent(BaseAgent):
         result["price_high"] = round(anchor_price, 2)
         result["currency"] = "CNY"
         result["tax_estimate"] = tax_estimate
+        if data_quality:
+            result["data_quality"] = data_quality
 
         logger.info("ReportCNAgent: done. confidence=%s", result.get("confidence_level"))
         return result

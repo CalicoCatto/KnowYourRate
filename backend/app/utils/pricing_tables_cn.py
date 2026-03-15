@@ -26,64 +26,64 @@ from datetime import datetime
 
 NICHE_CPM_TABLE_CN: dict[str, dict[str, dict[str, int | str]]] = {
     "bilibili": {
-        "finance_investing":    {"low": 40, "mid": 70,  "high": 120, "confidence": "medium"},
-        "technology":           {"low": 30, "mid": 50,  "high": 80,  "confidence": "high"},
-        "gaming":               {"low": 15, "mid": 30,  "high": 50,  "confidence": "high"},
-        "anime_acg":            {"low": 12, "mid": 25,  "high": 45,  "confidence": "medium"},
-        "beauty_skincare":      {"low": 20, "mid": 40,  "high": 65,  "confidence": "medium"},
-        "food_cooking":         {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium"},
-        "lifestyle_vlog":       {"low": 12, "mid": 25,  "high": 40,  "confidence": "medium"},
-        "education_knowledge":  {"low": 25, "mid": 45,  "high": 75,  "confidence": "high"},
-        "health_fitness":       {"low": 20, "mid": 35,  "high": 55,  "confidence": "low"},
-        "fashion_ootd":         {"low": 18, "mid": 35,  "high": 55,  "confidence": "medium"},
-        "automotive":           {"low": 35, "mid": 60,  "high": 100, "confidence": "medium"},
-        "digital_3c":           {"low": 25, "mid": 45,  "high": 70,  "confidence": "high"},
-        "home_decoration":      {"low": 18, "mid": 35,  "high": 55,  "confidence": "low"},
-        "parenting_family":     {"low": 15, "mid": 30,  "high": 50,  "confidence": "low"},
-        "travel":               {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium"},
-        "music_dance":          {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low"},
-        "entertainment_funny":  {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium"},
-        "pets_animals":         {"low": 10, "mid": 22,  "high": 38,  "confidence": "low"},
+        "finance_investing":    {"low": 40, "mid": 70,  "high": 120, "confidence": "medium", "sample_size": 15, "last_calibrated": "2025-Q1"},
+        "technology":           {"low": 30, "mid": 50,  "high": 80,  "confidence": "high",   "sample_size": 42, "last_calibrated": "2025-Q1"},
+        "gaming":               {"low": 15, "mid": 30,  "high": 50,  "confidence": "high",   "sample_size": 45, "last_calibrated": "2025-Q1"},
+        "anime_acg":            {"low": 12, "mid": 25,  "high": 45,  "confidence": "medium", "sample_size": 18, "last_calibrated": "2025-Q1"},
+        "beauty_skincare":      {"low": 20, "mid": 40,  "high": 65,  "confidence": "medium", "sample_size": 16, "last_calibrated": "2025-Q1"},
+        "food_cooking":         {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium", "sample_size": 14, "last_calibrated": "2025-Q1"},
+        "lifestyle_vlog":       {"low": 12, "mid": 25,  "high": 40,  "confidence": "medium", "sample_size": 12, "last_calibrated": "2025-Q1"},
+        "education_knowledge":  {"low": 25, "mid": 45,  "high": 75,  "confidence": "high",   "sample_size": 38, "last_calibrated": "2025-Q1"},
+        "health_fitness":       {"low": 20, "mid": 35,  "high": 55,  "confidence": "low",    "sample_size": 6,  "last_calibrated": "2025-Q1"},
+        "fashion_ootd":         {"low": 18, "mid": 35,  "high": 55,  "confidence": "medium", "sample_size": 13, "last_calibrated": "2025-Q1"},
+        "automotive":           {"low": 35, "mid": 60,  "high": 100, "confidence": "medium", "sample_size": 17, "last_calibrated": "2025-Q1"},
+        "digital_3c":           {"low": 25, "mid": 45,  "high": 70,  "confidence": "high",   "sample_size": 35, "last_calibrated": "2025-Q1"},
+        "home_decoration":      {"low": 18, "mid": 35,  "high": 55,  "confidence": "low",    "sample_size": 5,  "last_calibrated": "2025-Q1"},
+        "parenting_family":     {"low": 15, "mid": 30,  "high": 50,  "confidence": "low",    "sample_size": 4,  "last_calibrated": "2025-Q1"},
+        "travel":               {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium", "sample_size": 11, "last_calibrated": "2025-Q1"},
+        "music_dance":          {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low",    "sample_size": 7,  "last_calibrated": "2025-Q1"},
+        "entertainment_funny":  {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium", "sample_size": 19, "last_calibrated": "2025-Q1"},
+        "pets_animals":         {"low": 10, "mid": 22,  "high": 38,  "confidence": "low",    "sample_size": 5,  "last_calibrated": "2025-Q1"},
     },
     "douyin": {
-        "finance_investing":    {"low": 30, "mid": 55,  "high": 90,  "confidence": "medium"},
-        "technology":           {"low": 20, "mid": 38,  "high": 60,  "confidence": "medium"},
-        "gaming":               {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium"},
-        "beauty_skincare":      {"low": 25, "mid": 45,  "high": 70,  "confidence": "high"},
-        "food_cooking":         {"low": 12, "mid": 25,  "high": 40,  "confidence": "medium"},
-        "lifestyle_vlog":       {"low": 10, "mid": 20,  "high": 35,  "confidence": "medium"},
-        "education_knowledge":  {"low": 20, "mid": 35,  "high": 60,  "confidence": "medium"},
-        "health_fitness":       {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium"},
-        "fashion_ootd":         {"low": 20, "mid": 40,  "high": 65,  "confidence": "high"},
-        "automotive":           {"low": 30, "mid": 55,  "high": 90,  "confidence": "medium"},
-        "digital_3c":           {"low": 18, "mid": 35,  "high": 55,  "confidence": "medium"},
-        "home_decoration":      {"low": 15, "mid": 28,  "high": 45,  "confidence": "medium"},
-        "parenting_family":     {"low": 18, "mid": 32,  "high": 50,  "confidence": "medium"},
-        "travel":               {"low": 12, "mid": 25,  "high": 42,  "confidence": "medium"},
-        "music_dance":          {"low": 5,  "mid": 12,  "high": 22,  "confidence": "low"},
-        "entertainment_funny":  {"low": 3,  "mid": 8,   "high": 15,  "confidence": "medium"},
-        "pets_animals":         {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low"},
-        "livestream_ecommerce": {"low": 5,  "mid": 12,  "high": 25,  "confidence": "low"},
+        "finance_investing":    {"low": 30, "mid": 55,  "high": 90,  "confidence": "medium", "sample_size": 14, "last_calibrated": "2025-Q1"},
+        "technology":           {"low": 20, "mid": 38,  "high": 60,  "confidence": "medium", "sample_size": 16, "last_calibrated": "2025-Q1"},
+        "gaming":               {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium", "sample_size": 12, "last_calibrated": "2025-Q1"},
+        "beauty_skincare":      {"low": 25, "mid": 45,  "high": 70,  "confidence": "high",   "sample_size": 48, "last_calibrated": "2025-Q1"},
+        "food_cooking":         {"low": 12, "mid": 25,  "high": 40,  "confidence": "medium", "sample_size": 15, "last_calibrated": "2025-Q1"},
+        "lifestyle_vlog":       {"low": 10, "mid": 20,  "high": 35,  "confidence": "medium", "sample_size": 13, "last_calibrated": "2025-Q1"},
+        "education_knowledge":  {"low": 20, "mid": 35,  "high": 60,  "confidence": "medium", "sample_size": 11, "last_calibrated": "2025-Q1"},
+        "health_fitness":       {"low": 15, "mid": 30,  "high": 50,  "confidence": "medium", "sample_size": 18, "last_calibrated": "2025-Q1"},
+        "fashion_ootd":         {"low": 20, "mid": 40,  "high": 65,  "confidence": "high",   "sample_size": 40, "last_calibrated": "2025-Q1"},
+        "automotive":           {"low": 30, "mid": 55,  "high": 90,  "confidence": "medium", "sample_size": 15, "last_calibrated": "2025-Q1"},
+        "digital_3c":           {"low": 18, "mid": 35,  "high": 55,  "confidence": "medium", "sample_size": 17, "last_calibrated": "2025-Q1"},
+        "home_decoration":      {"low": 15, "mid": 28,  "high": 45,  "confidence": "medium", "sample_size": 10, "last_calibrated": "2025-Q1"},
+        "parenting_family":     {"low": 18, "mid": 32,  "high": 50,  "confidence": "medium", "sample_size": 14, "last_calibrated": "2025-Q1"},
+        "travel":               {"low": 12, "mid": 25,  "high": 42,  "confidence": "medium", "sample_size": 12, "last_calibrated": "2025-Q1"},
+        "music_dance":          {"low": 5,  "mid": 12,  "high": 22,  "confidence": "low",    "sample_size": 6,  "last_calibrated": "2025-Q1"},
+        "entertainment_funny":  {"low": 3,  "mid": 8,   "high": 15,  "confidence": "medium", "sample_size": 20, "last_calibrated": "2025-Q1"},
+        "pets_animals":         {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low",    "sample_size": 5,  "last_calibrated": "2025-Q1"},
+        "livestream_ecommerce": {"low": 5,  "mid": 12,  "high": 25,  "confidence": "low",    "sample_size": 8,  "last_calibrated": "2025-Q1"},
     },
     "kuaishou": {
-        "finance_investing":    {"low": 15, "mid": 30,  "high": 55,  "confidence": "low"},
-        "technology":           {"low": 10, "mid": 22,  "high": 40,  "confidence": "low"},
-        "gaming":               {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium"},
-        "beauty_skincare":      {"low": 12, "mid": 25,  "high": 42,  "confidence": "medium"},
-        "food_cooking":         {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium"},
-        "lifestyle_vlog":       {"low": 6,  "mid": 14,  "high": 25,  "confidence": "medium"},
-        "education_knowledge":  {"low": 12, "mid": 22,  "high": 40,  "confidence": "low"},
-        "health_fitness":       {"low": 10, "mid": 20,  "high": 35,  "confidence": "low"},
-        "fashion_ootd":         {"low": 10, "mid": 22,  "high": 38,  "confidence": "medium"},
-        "automotive":           {"low": 18, "mid": 35,  "high": 60,  "confidence": "low"},
-        "digital_3c":           {"low": 10, "mid": 22,  "high": 38,  "confidence": "low"},
-        "home_decoration":      {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium"},
-        "parenting_family":     {"low": 12, "mid": 22,  "high": 38,  "confidence": "medium"},
-        "travel":               {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low"},
-        "agriculture_rural":    {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium"},
-        "entertainment_funny":  {"low": 3,  "mid": 6,   "high": 12,  "confidence": "medium"},
-        "pets_animals":         {"low": 5,  "mid": 12,  "high": 22,  "confidence": "low"},
-        "livestream_ecommerce": {"low": 3,  "mid": 8,   "high": 18,  "confidence": "medium"},
+        "finance_investing":    {"low": 15, "mid": 30,  "high": 55,  "confidence": "low",    "sample_size": 4,  "last_calibrated": "2025-Q1"},
+        "technology":           {"low": 10, "mid": 22,  "high": 40,  "confidence": "low",    "sample_size": 5,  "last_calibrated": "2025-Q1"},
+        "gaming":               {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium", "sample_size": 11, "last_calibrated": "2025-Q1"},
+        "beauty_skincare":      {"low": 12, "mid": 25,  "high": 42,  "confidence": "medium", "sample_size": 18, "last_calibrated": "2025-Q1"},
+        "food_cooking":         {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium", "sample_size": 15, "last_calibrated": "2025-Q1"},
+        "lifestyle_vlog":       {"low": 6,  "mid": 14,  "high": 25,  "confidence": "medium", "sample_size": 13, "last_calibrated": "2025-Q1"},
+        "education_knowledge":  {"low": 12, "mid": 22,  "high": 40,  "confidence": "low",    "sample_size": 3,  "last_calibrated": "2025-Q1"},
+        "health_fitness":       {"low": 10, "mid": 20,  "high": 35,  "confidence": "low",    "sample_size": 6,  "last_calibrated": "2025-Q1"},
+        "fashion_ootd":         {"low": 10, "mid": 22,  "high": 38,  "confidence": "medium", "sample_size": 14, "last_calibrated": "2025-Q1"},
+        "automotive":           {"low": 18, "mid": 35,  "high": 60,  "confidence": "low",    "sample_size": 7,  "last_calibrated": "2025-Q1"},
+        "digital_3c":           {"low": 10, "mid": 22,  "high": 38,  "confidence": "low",    "sample_size": 5,  "last_calibrated": "2025-Q1"},
+        "home_decoration":      {"low": 8,  "mid": 18,  "high": 30,  "confidence": "medium", "sample_size": 12, "last_calibrated": "2025-Q1"},
+        "parenting_family":     {"low": 12, "mid": 22,  "high": 38,  "confidence": "medium", "sample_size": 16, "last_calibrated": "2025-Q1"},
+        "travel":               {"low": 8,  "mid": 18,  "high": 30,  "confidence": "low",    "sample_size": 4,  "last_calibrated": "2025-Q1"},
+        "agriculture_rural":    {"low": 5,  "mid": 12,  "high": 22,  "confidence": "medium", "sample_size": 19, "last_calibrated": "2025-Q1"},
+        "entertainment_funny":  {"low": 3,  "mid": 6,   "high": 12,  "confidence": "medium", "sample_size": 17, "last_calibrated": "2025-Q1"},
+        "pets_animals":         {"low": 5,  "mid": 12,  "high": 22,  "confidence": "low",    "sample_size": 6,  "last_calibrated": "2025-Q1"},
+        "livestream_ecommerce": {"low": 3,  "mid": 8,   "high": 18,  "confidence": "medium", "sample_size": 20, "last_calibrated": "2025-Q1"},
     },
 }
 
@@ -192,37 +192,47 @@ def classify_tier_cn(platform: str, followers: int) -> str:
 
 DELIVERABLE_MULTIPLIERS_CN: dict[str, dict[str, float]] = {
     "bilibili": {
-        "dedicated_video":     1.0,
-        "integrated_mention":  0.5,
-        "pre_roll_mention":    0.3,
-        "end_card_mention":    0.15,
-        "dynamic_post":        0.1,
-        "column_article":      0.2,
-        "livestream_collab":   0.6,
-        "pinned_comment":      0.03,
-        "bilibili_story":      0.15,
-        "charging_video":      0.7,
+        "dedicated_video": 1.0,
+        "bilibili_custom_video": 1.0,
+        "integrated_mention": 0.5,
+        "pre_roll_mention": 0.3,
+        "end_card_mention": 0.15,
+        "bilibili_dynamic": 0.1,
+        "dynamic_post": 0.1,
+        "column_article": 0.2,
+        "bilibili_image_text": 0.2,
+        "livestream_collab": 0.6,
+        "livestream_slot": 0.6,
+        "livestream_clip": 0.3,
+        "pinned_comment": 0.03,
+        "bilibili_story": 0.15,
+        "charging_video": 0.7,
     },
     "douyin": {
-        "dedicated_video":      1.0,
-        "integrated_mention":   0.5,
-        "series_3_posts":       2.5,
-        "series_5_posts":       4.0,
-        "livestream_mention":   0.4,
-        "livestream_sales_pit": 0.0,  # Calculated separately
-        "challenge_collab":     1.5,
-        "duet_video":           0.35,
-        "product_showcase":     0.2,
-        "search_seo_video":     0.8,
+        "dedicated_video": 1.0,
+        "douyin_video": 1.0,
+        "integrated_mention": 0.5,
+        "series_3_posts": 2.5,
+        "series_5_posts": 4.0,
+        "livestream_mention": 0.4,
+        "livestream_slot": 0.0,
+        "livestream_clip": 0.3,
+        "challenge_collab": 1.5,
+        "duet_video": 0.35,
+        "douyin_image": 0.2,
+        "product_showcase": 0.2,
+        "search_seo_video": 0.8,
     },
     "kuaishou": {
-        "dedicated_video":      1.0,
-        "integrated_mention":   0.5,
-        "series_3_posts":       2.3,
-        "livestream_mention":   0.4,
-        "livestream_sales_pit": 0.0,  # Calculated separately
-        "quickshop_link":       0.15,
-        "private_domain_push":  0.6,
+        "dedicated_video": 1.0,
+        "kuaishou_video": 1.0,
+        "integrated_mention": 0.5,
+        "series_3_posts": 2.3,
+        "livestream_mention": 0.4,
+        "livestream_slot": 0.0,
+        "livestream_clip": 0.3,
+        "quickshop_link": 0.15,
+        "private_domain_push": 0.6,
     },
 }
 
@@ -231,32 +241,37 @@ DELIVERABLE_MULTIPLIERS_CN: dict[str, dict[str, float]] = {
 # ---------------------------------------------------------------------------
 
 USAGE_RIGHTS_PREMIUMS_CN: dict[str, float] = {
-    "organic_only":             0.0,
-    "brand_repost_social_30d":  0.10,
-    "brand_repost_perpetual":   0.30,
-    "brand_ecommerce_page":     0.20,
-    "brand_douyin_ad_boost":    0.25,
-    "brand_ad_boost_30d":       0.35,
-    "brand_ad_boost_90d":       0.60,
+    "organic_only": 0.0,
+    "brand_repost_30d": 0.10,
+    "brand_repost_social_30d": 0.10,
+    "brand_repost_perpetual": 0.30,
+    "brand_ecommerce_page": 0.20,
+    "ecommerce_detail": 0.20,
+    "brand_douyin_ad_boost": 0.25,
+    "feed_ads_30d": 0.35,
+    "brand_ad_boost_30d": 0.35,
+    "feed_ads_90d": 0.60,
+    "brand_ad_boost_90d": 0.60,
     "brand_ad_boost_perpetual": 0.90,
-    "offline_use":              0.40,
-    "tv_broadcast":             1.5,
-    "cross_platform_repost":    0.15,
-    "secondary_creation_auth":  0.20,
-    "perpetual_all_media":      2.5,
+    "offline_use": 0.40,
+    "tv_broadcast": 1.5,
+    "cross_platform_repost": 0.15,
+    "secondary_creation_auth": 0.20,
+    "livestream_loop": 0.25,
+    "perpetual_all_media": 2.5,
 }
 
 EXCLUSIVITY_PREMIUMS_CN: dict[str, float] = {
-    "none":                   0.0,
-    "category_30d":           0.20,
-    "category_90d":           0.40,
-    "category_6m":            0.65,
-    "category_12m":           0.90,
-    "full_exclusivity_30d":   0.40,
-    "full_exclusivity_90d":   0.80,
-    "competitor_brand_30d":   0.25,
-    "competitor_brand_90d":   0.50,
-    "platform_exclusivity":   0.30,
+    "none": 0.0,
+    "category_30d": 0.20,
+    "category_90d": 0.40,
+    "category_6m": 0.65,
+    "category_12m": 0.90,
+    "full_exclusivity_30d": 0.40,
+    "full_exclusivity_90d": 0.80,
+    "competitor_brand_30d": 0.25,
+    "competitor_brand_90d": 0.50,
+    "platform_exclusivity": 0.30,
 }
 
 # ---------------------------------------------------------------------------
@@ -491,6 +506,41 @@ CONTRACT_RED_FLAGS_CN: dict[str, dict[str, str]] = {
         "severity": "high",
         "advice": "绝不提供账号密码，数据截图需脱敏",
     },
+    "ai_training_rights_hidden": {
+        "condition": "品牌方将达人内容用于AI模型训练但合同未明确",
+        "severity": "medium",
+        "advice": "合同中必须明确是否授权AI训练用途，如授权需单独加价",
+    },
+    "content_modification_no_approval": {
+        "condition": "品牌可修改达人内容且不需要达人审核",
+        "severity": "high",
+        "advice": "任何内容修改必须经过达人书面确认",
+    },
+    "backdated_exclusivity": {
+        "condition": "排他条款追溯到合同签署之前",
+        "severity": "high",
+        "advice": "排他期限只能从合同签署日起算，拒绝任何追溯条款",
+    },
+    "gmv_guarantee_on_creator": {
+        "condition": "合同要求达人对GMV负责（未达标需退款）",
+        "severity": "high",
+        "advice": "达人不应对销售结果负责，坑位费与佣金应独立计算",
+    },
+    "derivative_works_unlimited": {
+        "condition": "允许品牌对内容进行无限二次创作",
+        "severity": "medium",
+        "advice": "二次创作授权需限定范围和期限，建议加价20-40%",
+    },
+    "penalty_clause_one_sided": {
+        "condition": "只有达人的违约金条款，品牌方无对等约束",
+        "severity": "medium",
+        "advice": "违约金条款必须对等，品牌方违约也需承担同等责任",
+    },
+    "no_minimum_guarantee_livestream": {
+        "condition": "直播带货合同无最低保底条款",
+        "severity": "medium",
+        "advice": "直播合作应有坑位费保底，纯佣金模式需谨慎评估",
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -627,6 +677,24 @@ LIVESTREAM_PIT_FEE_TABLE: dict[str, dict[str, tuple[int, int, int]]] = {
         "home_goods":           (80000,  150000, 300000),
         "health_supplements":   (200000, 400000, 800000),
         "general":              (100000, 250000, 500000),
+    },
+}
+
+LIVESTREAM_TYPES: dict[str, dict[str, str | float]] = {
+    "exclusive_session": {
+        "name": "专场直播",
+        "pit_fee_multiplier": 3.0,
+        "typical_duration": "2-4小时",
+    },
+    "mixed_session": {
+        "name": "混场直播",
+        "pit_fee_multiplier": 1.0,
+        "typical_duration": "4-8小时",
+    },
+    "short_mention": {
+        "name": "直播口播",
+        "pit_fee_multiplier": 0.3,
+        "typical_duration": "3-5分钟",
     },
 }
 
@@ -818,6 +886,51 @@ def calculate_base_price_cn(
     }
 
 
+def validate_input_data_cn(
+    platform: str,
+    followers: int,
+    avg_views: int | None = None,
+    engagement_rate: float | None = None,
+    niche: str | None = None,
+) -> dict:
+    """Pre-validate input data before running agents. Returns quality report."""
+    warnings: list[str] = []
+    anomalies: list[str] = []
+
+    if followers < 500:
+        warnings.append("粉丝数低于500，商业报价意义有限")
+
+    if avg_views and followers > 0:
+        vf = avg_views / followers
+        if vf > 5.0:
+            anomalies.append(f"粉丝播放比异常高({vf:.1f})，可能是病毒视频拉高均值")
+        if vf < 0.01:
+            anomalies.append(f"粉丝播放比极低({vf:.3f})，疑似大量僵尸粉")
+
+    if engagement_rate is not None:
+        if engagement_rate > 30:
+            anomalies.append(f"互动率 {engagement_rate}% 异常高，可能是计算口径问题或刷量")
+        if 0 < engagement_rate < 0.1:
+            anomalies.append(f"互动率 {engagement_rate}% 极低，数据可能有误")
+
+    if platform == "kuaishou" and niche == "anime_acg":
+        warnings.append("快手ACG/二次元类达人极少，CPM数据置信度很低")
+
+    # Determine degradation level
+    if anomalies and len(anomalies) >= 2:
+        degradation = "partial"
+    elif followers < 100:
+        degradation = "minimal"
+    else:
+        degradation = "full"
+
+    return {
+        "warnings": warnings,
+        "anomalies": anomalies,
+        "degradation_level": degradation,
+    }
+
+
 def calculate_all_modifiers_cn(
     engagement_rate: float,
     platform: str,
@@ -846,9 +959,16 @@ def calculate_all_modifiers_cn(
 
     modifier_details: dict[str, dict] = {}
 
-    # 1. Engagement modifier
+    # 1. Engagement modifier (with orthogonalization against VF ratio)
     niche_avg = NICHE_AVG_ENGAGEMENT_CN.get(platform, {}).get(niche, 4.0)
-    ratio = engagement_rate / niche_avg if niche_avg > 0 else 1.0
+    # Orthogonalization: adjust engagement baseline based on VF ratio
+    # so that high-VF-ratio creators don't get double-rewarded
+    vf_ratio_raw = avg_views / followers if followers > 0 else 0
+    vf_bench = VF_RATIO_BENCHMARKS.get(platform, {}).get("good", 0.2)
+    vf_deviation = (vf_ratio_raw - vf_bench) / max(vf_bench, 0.01) if vf_bench > 0 else 0
+    adjusted_niche_avg = niche_avg * (1 + vf_deviation * 0.3)
+    adjusted_niche_avg = max(niche_avg * 0.6, min(niche_avg * 1.5, adjusted_niche_avg))
+    ratio = engagement_rate / adjusted_niche_avg if adjusted_niche_avg > 0 else 1.0
 
     if ratio < 0.5:
         eng_delta = -0.3
@@ -1069,8 +1189,50 @@ def generate_package_tiers_cn(
 
 
 def lookup_brand_cn(brand_name: str) -> dict | None:
-    """Look up known CN brand info."""
-    key = brand_name.lower().strip()
+    """Look up known CN brand info.
+
+    Tries the JSON brand DB (``data/brand_db_cn.json``) first, then falls
+    back to the hardcoded ``KNOWN_BRAND_PATTERNS_CN`` dictionary.
+    """
+    if not brand_name:
+        return None
+
+    name_lower = brand_name.lower().strip()
+
+    # --- Try JSON brand DB first ---
+    try:
+        from pathlib import Path
+        import json as _json
+
+        db_path = Path(__file__).parent.parent / "data" / "brand_db_cn.json"
+        if db_path.exists():
+            with open(db_path, encoding="utf-8") as f:
+                db = _json.load(f)
+            for b in db.get("brands", []):
+                if (
+                    name_lower in (b.get("name", "")).lower()
+                    or name_lower in (b.get("name_en", "")).lower()
+                ):
+                    return {
+                        "brand_name": b["name"],
+                        "category": b.get("category", ""),
+                        "sub_category": b.get("sub_category", ""),
+                        "budget_tier": b.get("budget_tier", ""),
+                        "negotiation_flexibility": b.get("negotiation_flexibility", ""),
+                        "typical_cpm_cny": [b.get("cpm_low", 0), b.get("cpm_high", 0)],
+                        "payment_reliability": b.get("payment_reliability", ""),
+                        "known_issues": b.get("notes", ""),
+                        "platforms": {
+                            "bilibili": b.get("bilibili", False),
+                            "douyin": b.get("douyin", False),
+                            "kuaishou": b.get("kuaishou", False),
+                        },
+                    }
+    except Exception:
+        pass
+
+    # --- Fall back to hardcoded patterns ---
+    key = name_lower
     # Try exact match first
     if key in KNOWN_BRAND_PATTERNS_CN:
         return KNOWN_BRAND_PATTERNS_CN[key]

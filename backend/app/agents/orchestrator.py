@@ -70,6 +70,26 @@ class AgentOrchestrator:
             "brand_info": brand_info,
         }
 
+        # --- Data Validator (CN only) ---
+        data_quality = None
+        if is_cn():
+            from app.utils.pricing_tables_cn import validate_input_data_cn
+            data_quality = validate_input_data_cn(
+                platform=creator_data.get("platform", "bilibili"),
+                followers=int(creator_data.get("subscriber_count", 0)),
+                avg_views=int(creator_data.get("avg_views", 0)) or None,
+                engagement_rate=float(creator_data.get("engagement_rate", 0)) or None,
+                niche=creator_data.get("content_niche"),
+            )
+            context["data_quality"] = data_quality
+            if data_quality.get("warnings") or data_quality.get("anomalies"):
+                logger.info(
+                    "Data Validator: warnings=%s, anomalies=%s, degradation=%s",
+                    data_quality.get("warnings", []),
+                    data_quality.get("anomalies", []),
+                    data_quality.get("degradation_level"),
+                )
+
         # --- Route complexity ---
         niche = creator_data.get("content_niche", "lifestyle_vlog")
         if is_cn():
@@ -82,6 +102,10 @@ class AgentOrchestrator:
                 has_livestream=brand_info.get("has_livestream", False),
                 num_platforms=brand_info.get("num_platforms", 1),
             )
+            # Data quality can force fast_track
+            if data_quality and data_quality.get("degradation_level") == "minimal":
+                route = "fast_track"
+                logger.info("Data quality too low, forcing fast_track")
         else:
             route = route_fn(
                 brand_name=brand_info.get("brand_name"),

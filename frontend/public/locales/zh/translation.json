@@ -97,7 +97,20 @@
     "mcnExclusive": "MCN独家签约",
     "hasLivestream": "包含直播",
     "hasLivestreamDesc": "本次合作包含直播电商环节",
-    "numPlatforms": "合作平台数量"
+    "numPlatforms": "合作平台数量",
+    "browseBrands": "品牌库",
+    "brandDatabase": "品牌数据库",
+    "searchBrandPlaceholder": "搜索品牌名称...",
+    "allCategories": "全部品类",
+    "search": "搜索",
+    "loading": "加载中...",
+    "noBrandsFound": "未找到匹配品牌",
+    "budgetTier": "预算等级",
+    "negotiationFlex": "谈判灵活度",
+    "paymentReliability": "付款可靠性",
+    "budget": "预算",
+    "negotiation": "谈判",
+    "payment": "付款"
   },
   "analysis": {
     "title": "分析进行中",

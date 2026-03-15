@@ -336,12 +336,22 @@ export const USAGE_RIGHTS_LABELS_INTL: Record<string, string> = {
 
 export const USAGE_RIGHTS_LABELS_CN: Record<string, string> = {
   organic_only: "仅创作者频道发布",
+  brand_repost_social_30d: "品牌社交媒体转发 (30天)",
   brand_repost_30d: "品牌转发 (30天)",
   brand_repost_perpetual: "品牌转发 (永久)",
-  feed_ads_30d: "信息流投放 (30天)",
-  feed_ads_90d: "信息流投放 (90天)",
-  livestream_loop: "直播间循环播放",
+  brand_ecommerce_page: "电商详情页使用",
   ecommerce_detail: "电商详情页使用",
+  brand_douyin_ad_boost: "抖音Dou+/信息流投放",
+  feed_ads_30d: "信息流投放 (30天)",
+  brand_ad_boost_30d: "广告素材使用 (30天)",
+  feed_ads_90d: "信息流投放 (90天)",
+  brand_ad_boost_90d: "广告素材使用 (90天)",
+  brand_ad_boost_perpetual: "广告素材永久使用",
+  offline_use: "线下物料使用",
+  tv_broadcast: "电视广告使用",
+  cross_platform_repost: "跨平台搬运",
+  secondary_creation_auth: "二次创作授权",
+  livestream_loop: "直播间循环播放",
   perpetual_all_media: "全媒体永久使用",
 };
 
@@ -372,6 +382,9 @@ export const EXCLUSIVITY_LABELS_CN: Record<string, string> = {
   category_12m: "品类排他 (12个月)",
   full_exclusivity_30d: "全品类排他 (30天)",
   full_exclusivity_90d: "全品类排他 (90天)",
+  competitor_brand_30d: "指定竞品排他 (30天)",
+  competitor_brand_90d: "指定竞品排他 (90天)",
+  platform_exclusivity: "平台排他",
 };
 
 /* Niche options aligned with backend CPM tables */
@@ -452,6 +465,38 @@ export const NICHE_LABELS_CN: Record<string, string> = {
   digital_3c: "数码3C",
   home_furnishing: "家居/家装",
 };
+
+/* ---- Brand DB ---- */
+
+export interface BrandInfo {
+  id: string;
+  name: string;
+  name_en: string | null;
+  category: string;
+  sub_category: string | null;
+  budget_tier: string;
+  negotiation_flexibility: string;
+  cpm_low: number | null;
+  cpm_high: number | null;
+  bilibili: boolean;
+  douyin: boolean;
+  kuaishou: boolean;
+  bilibili_activity: string;
+  payment_reliability: string;
+  notes: string;
+  bilibili_details?: {
+    content_requirements: string;
+    known_risks: string;
+    cooperation_limits: string;
+    bilibili_special: string;
+  };
+}
+
+export interface BrandSearchResult {
+  brands: BrandInfo[];
+  total: number;
+  categories: string[];
+}
 
 /* ---- CN-specific types ---- */
 

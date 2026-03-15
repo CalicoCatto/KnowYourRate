@@ -12,6 +12,7 @@ import type {
   ReportResponse,
   ReportList,
   SSEEvent,
+  BrandSearchResult,
 } from "@/types";
 
 const api = axios.create({ baseURL: "/api" });
@@ -137,6 +138,20 @@ export function subscribeToStatus(
   };
 
   return () => es.close();
+}
+
+/* ------------------------------------------------------------------ */
+/*  Brands                                                             */
+/* ------------------------------------------------------------------ */
+
+export async function searchBrands(query: string, platform?: string, category?: string): Promise<BrandSearchResult> {
+  const params = new URLSearchParams();
+  if (query) params.set("q", query);
+  if (platform) params.set("platform", platform);
+  if (category) params.set("category", category);
+  params.set("limit", "20");
+  const res = await api.get(`/brands/search?${params.toString()}`);
+  return res.data;
 }
 
 /* ------------------------------------------------------------------ */
