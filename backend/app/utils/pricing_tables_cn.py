@@ -148,6 +148,31 @@ NICHE_AVG_ENGAGEMENT_CN: dict[str, dict[str, float]] = {
 }
 
 # ---------------------------------------------------------------------------
+# 3b. Engagement Rate Definitions (v2.0) — per-platform formulas
+# ---------------------------------------------------------------------------
+
+ENGAGEMENT_RATE_DEFINITIONS: dict[str, dict] = {
+    "bilibili": {
+        "formula": "(点赞 + 投币 + 收藏 + 弹幕 + 评论) / 播放量 × 100%",
+        "components": ["like", "coin", "favorite", "danmaku", "comment"],
+        "niche_averages": NICHE_AVG_ENGAGEMENT_CN.get("bilibili", {}),
+        "note": "B站互动率远高于其他平台，投币和收藏是独特的强互动信号",
+    },
+    "douyin": {
+        "formula": "(点赞 + 评论 + 转发) / 播放量 × 100%",
+        "components": ["like", "comment", "share"],
+        "niche_averages": NICHE_AVG_ENGAGEMENT_CN.get("douyin", {}),
+        "note": "抖音播放量含大量<3秒划过的无效曝光，互动率分母被放大",
+    },
+    "kuaishou": {
+        "formula": "(点赞 + 评论 + 转发) / 播放量 × 100%",
+        "components": ["like", "comment", "share"],
+        "niche_averages": NICHE_AVG_ENGAGEMENT_CN.get("kuaishou", {}),
+        "note": "快手老铁文化下互动率偏高，评论区活跃度突出",
+    },
+}
+
+# ---------------------------------------------------------------------------
 # 4. Tier Classification (CN)
 # ---------------------------------------------------------------------------
 
@@ -939,6 +964,8 @@ def calculate_all_modifiers_cn(
     followers: int,
     monthly_growth_rate: float | None = None,
     audience_city_distribution: dict | None = None,
+    audience_age_distribution: dict | None = None,
+    median_views: int | None = None,
     coin_rate: float = 0,
     favorite_rate: float = 0,
     completion_rate: float = 0,
@@ -1014,6 +1041,51 @@ def calculate_all_modifiers_cn(
         city_reason = "无城市线级数据，不修正"
 
     modifier_details["city_tier"] = {"delta": round(city_delta, 3), "reason": city_reason}
+
+    # 3b. Audience age modifier (v2.0)
+    age_delta = 0.0
+    if audience_age_distribution:
+        core_audience_pct = (
+            audience_age_distribution.get("18_24", 0)
+            + audience_age_distribution.get("25_34", 0)
+        )
+        if core_audience_pct > 70:
+            age_delta = 0.10
+            age_reason = f"18-34岁核心消费人群占比 {core_audience_pct}%，极优"
+        elif core_audience_pct > 50:
+            age_delta = 0.05
+            age_reason = f"18-34岁核心消费人群占比 {core_audience_pct}%，良好"
+        elif core_audience_pct < 30:
+            age_delta = -0.10
+            age_reason = f"18-34岁核心消费人群占比仅 {core_audience_pct}%，偏低"
+        else:
+            age_reason = f"18-34岁核心消费人群占比 {core_audience_pct}%，一般"
+
+        under_18 = audience_age_distribution.get("under_18", 0)
+        if under_18 > 30:
+            age_reason += f"；未成年人占比 {under_18}%，部分品类不可合作"
+    else:
+        age_reason = "无年龄分布数据"
+
+    modifier_details["audience_age"] = {"delta": round(age_delta, 3), "reason": age_reason}
+
+    # 3c. Stability modifier (v2.0) — median vs avg views
+    stability_delta = 0.0
+    if median_views is not None and avg_views > 0 and median_views > 0:
+        stability = median_views / avg_views
+        if stability > 0.85:
+            stability_delta = 0.05
+            stability_reason = f"内容表现非常稳定（中位数/均值={stability:.2f}）"
+        elif stability > 0.6:
+            stability_delta = 0.0
+            stability_reason = f"内容表现正常（中位数/均值={stability:.2f}）"
+        else:
+            stability_delta = -0.08
+            stability_reason = f"内容表现波动大（中位数/均值={stability:.2f}），依赖爆款"
+    else:
+        stability_reason = "无中位数播放量数据"
+
+    modifier_details["stability"] = {"delta": round(stability_delta, 3), "reason": stability_reason}
 
     # 4. Growth modifier
     if monthly_growth_rate is not None:
@@ -1184,6 +1256,20 @@ def generate_package_tiers_cn(
             "savings_vs_individual": "35%",
             "note": "直播带货部分另附佣金协议",
         }
+
+    # v2.0: Annual framework package
+    packages["annual_framework"] = {
+        "name": "年框合作",
+        "price": round(adjusted_price_mid * 8.0),
+        "includes": [
+            "12条视频（每月1条，灵活安排）",
+            "品牌社交媒体转发权全年",
+            "品类排他90天",
+        ],
+        "duration": "12个月",
+        "savings_vs_individual": "40%",
+        "note": "年框对达人意味着稳定收入，对品牌意味着最优单价",
+    }
 
     return packages
 

@@ -48,6 +48,10 @@ class CreatorProfileCNAgent(BaseAgent):
         revisit_rate = float(creator.get("revisit_rate", 0))
         live_viewer_follower_ratio = float(creator.get("live_viewer_follower_ratio", 0))
         audience_city_distribution = creator.get("audience_city_distribution")
+        audience_age_distribution = creator.get("audience_age_distribution")
+        median_views = creator.get("median_views")
+        if median_views is not None:
+            median_views = int(median_views)
 
         # --- Structured calculations ---
         tier = classify_tier_cn(platform, subscriber_count)
@@ -61,6 +65,8 @@ class CreatorProfileCNAgent(BaseAgent):
             followers=subscriber_count,
             monthly_growth_rate=monthly_growth,
             audience_city_distribution=audience_city_distribution,
+            audience_age_distribution=audience_age_distribution,
+            median_views=median_views,
             coin_rate=coin_rate,
             favorite_rate=favorite_rate,
             completion_rate=completion_rate,
